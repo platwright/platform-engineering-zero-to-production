@@ -1,0 +1,49 @@
+name: "🧪 Lab or tooling problem"
+description: Something in a hands-on lab, script, or setup step didn't work.
+title: "[lab]: "
+labels: ["lab", "needs-triage"]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Which lab or script?
+      description: Module path and lab, e.g. `01-platform-foundations/01-what-is-platform-engineering/lab`.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happened?
+      description: Paste the exact error output. Redact any secrets first.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Ran `...`
+        2. Saw `...`
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, tool versions (`docker version`, `kubectl version`, `terraform version`, etc.).
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this isn't a duplicate.
+          required: true
+        - label: I removed all secrets, tokens, and credentials from the logs above.
+          required: true

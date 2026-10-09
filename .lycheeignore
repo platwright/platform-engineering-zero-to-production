@@ -1,0 +1,13 @@
+# Lychee ignore list (regular expressions).
+# These are GitHub web-UI shortcuts: they resolve on github.com but not as
+# local filesystem paths, so skip them during offline link checking.
+\.\./\.\./issues
+\.\./\.\./discussions
+\.\./\.\./pulls
+\.\./\.\./security
+\.\./\.\./compare
+\.\./\.\./releases
+
+# Placeholder contacts and org names to be replaced before launch.
+example\.com
+your-org

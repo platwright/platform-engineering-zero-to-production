@@ -1,0 +1,35 @@
+name: Markdown Lint
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**/*.md"
+      - ".markdownlint.json"
+      - ".github/workflows/markdown-lint.yml"
+  pull_request:
+    paths:
+      - "**/*.md"
+      - ".markdownlint.json"
+      - ".github/workflows/markdown-lint.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  markdownlint:
+    name: Lint Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Pin the linter version for reproducible CI. markdownlint-cli2 reads
+      # the repository's .markdownlint.json automatically.
+      - name: Run markdownlint
+        run: npx --yes markdownlint-cli2@0.14.0 "**/*.md" "#node_modules"

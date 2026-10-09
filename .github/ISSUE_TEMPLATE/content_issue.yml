@@ -1,0 +1,52 @@
+name: "📘 Content issue"
+description: Report an error, something unclear, or a broken link in the course material.
+title: "[content]: "
+labels: ["content", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for improving the course! Please be specific so we can fix it fast.
+  - type: input
+    id: location
+    attributes:
+      label: Where is it?
+      description: Module and file path, e.g. `01-platform-foundations/03-developer-experience/README.md`.
+      placeholder: "NN-module/.../README.md (and a heading or line if you can)"
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of issue?
+      options:
+        - Factual error
+        - Unclear / confusing explanation
+        - Broken or wrong link
+        - Outdated command or tool version
+        - Typo / formatting
+        - Lab doesn't work as written
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What's wrong?
+      description: Describe the problem. Quote the text if helpful.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested fix (optional)
+      description: How would you correct or improve it?
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this isn't a duplicate.
+          required: true
+        - label: This report contains no secrets or private information.
+          required: true

@@ -1,0 +1,15 @@
+# Code owners — automatically request reviews when matching files change.
+# Replace the placeholder team/users below with real GitHub handles before launch.
+# Docs: https://docs.github.com/articles/about-code-owners
+
+# Default owners for everything in the repo.
+*                           @your-org/maintainers
+
+# Repository infrastructure.
+/.github/                   @your-org/maintainers
+/shared/                    @your-org/maintainers
+/scripts/                   @your-org/maintainers
+
+# Curriculum areas (assign subject-matter owners as the course grows).
+/00-orientation/            @your-org/maintainers
+/01-platform-foundations/   @your-org/maintainers

@@ -1,0 +1,44 @@
+name: "✨ Content request or idea"
+description: Suggest a new module, lab, diagram, cheat sheet, or an improvement.
+title: "[request]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a look at the [ROADMAP](../../blob/main/ROADMAP.md) first — your idea
+        may already be planned. If so, comment there instead.
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like to see?
+      description: Describe the content or improvement and who it helps.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why does it matter?
+      description: What problem does this solve for a learner or platform engineer?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - New module or lesson
+        - New or improved lab
+        - Diagram
+        - Cheat sheet
+        - Interview prep
+        - Tooling / repository infrastructure
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Would you like to help?
+      options:
+        - label: I'm willing to open a pull request for this.

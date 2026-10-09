@@ -1,0 +1,25 @@
+# Normalize line endings to LF on commit; check out as-is.
+* text=auto eol=lf
+
+# Scripts must always be LF so they run on Linux containers/CI.
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Windows-only scripts keep CRLF.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Treat these as binary (no diff / no EOL conversion).
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+
+# Collapse generated/vendored content in diffs.
+*.lock linguist-generated=true

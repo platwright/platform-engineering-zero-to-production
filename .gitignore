@@ -1,0 +1,104 @@
+# ---------------------------------------------------------------------------
+# Secrets & credentials — NEVER commit these
+# ---------------------------------------------------------------------------
+*.env
+.env
+.env.*
+!.env.example
+*.tfvars
+!*.tfvars.example
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+credentials*.json
+!credentials*.example.json
+sa-key*.json
+kubeconfig
+*.kubeconfig
+.kube/
+secrets.yaml
+!secrets.example.yaml
+*-secret.yaml
+!*-secret.example.yaml
+
+# ---------------------------------------------------------------------------
+# Terraform
+# ---------------------------------------------------------------------------
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------------------
+# Go
+# ---------------------------------------------------------------------------
+bin/
+dist/
+*.exe
+*.test
+*.out
+vendor/
+
+# ---------------------------------------------------------------------------
+# Node / Backstage
+# ---------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-error.log
+.next/
+build/
+coverage/
+
+# ---------------------------------------------------------------------------
+# Kubernetes / Helm
+# ---------------------------------------------------------------------------
+*.tgz
+charts/*/charts/
+.helm/
+
+# ---------------------------------------------------------------------------
+# Editors & OS
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.shared.json
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------------
+# Logs & scratch
+# ---------------------------------------------------------------------------
+*.log
+tmp/
+.tmp/
+scratch/

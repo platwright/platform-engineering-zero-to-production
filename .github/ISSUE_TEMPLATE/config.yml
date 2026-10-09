@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or discussion
+    url: ../../discussions
+    about: Ask a question, share feedback, or discuss the course here.
+  - name: Security report
+    url: ../../security/advisories/new
+    about: Report a security issue privately (never in a public issue).
