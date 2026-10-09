@@ -1,0 +1,14 @@
+# REFERENCE ONLY — apply this on GKE, not on a kind cluster.
+# It defines an SSD-backed class with online volume expansion and zone-aware
+# binding. kind's built-in "standard" class (local-path) does NOT support
+# expansion, which is why the lab demonstrates expansion as a GKE-only step.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-ssd
+provisioner: pd.csi.storage.gke.io
+parameters:
+  type: pd-ssd
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer

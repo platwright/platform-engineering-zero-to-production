@@ -1,25 +1,37 @@
 # 04 · Platform Project 01 — Container Platform Foundation
 
-> 🚧 **Status: planned.** This section is scaffolded — the full content is on the
-> way. Track progress in the [ROADMAP](../ROADMAP.md) and [CHANGELOG](../CHANGELOG.md).
+> Your first real platform build. You've learned the mindset (Phase 1), how
+> containers work (Phase 2), and how to operate Kubernetes (Phase 3). Now you'll
+> combine them into the **foundation other teams build on**: a multi-team cluster
+> with isolation, guardrails, and a hardened golden-path workload.
 
-**Project 1**
+**This is a project, not a lesson.** It consolidates everything so far into one
+buildable system and becomes the base you keep upgrading in later phases.
 
-Your first end-to-end project: build a production-grade GKE cluster foundation with the baseline capabilities a team needs to start deploying services safely.
+➡️ **[Open the project: Container Platform Foundation](./container-platform-foundation/README.md)**
 
-## What you'll build
+## At a glance
 
-- GKE cluster, VPC, and node pools provisioned with Terraform
-- Namespaces with per-team RBAC, LimitRanges, and ResourceQuotas
-- A CI pipeline: build → Trivy scan → Cosign sign → push
-- Policy enforcement (non-root, read-only) via Kyverno
-- Secrets via External Secrets Operator + GCP Secret Manager
+| | |
+|---|---|
+| **Goal** | A production-grade container platform foundation teams can deploy onto safely. |
+| **You'll use** | Containers (Phase 2), Kubernetes (Phase 3), product thinking (Phase 1). |
+| **Pass 1 (now)** | Build it locally on `kind` — namespaces, RBAC, quotas, a hardened workload. Free. |
+| **Pass 2 (later)** | Upgrade each piece to production (Terraform GKE, CI build→scan→sign→push, Kyverno, ESO, Cilium) as those phases teach them. |
+| **Deliverable** | A reproducible foundation + architecture doc + ADRs + onboarding guide. |
+| **Effort** | ~8–12 hours for Pass 1; Pass 2 is spread across later phases. |
 
-## Prerequisites
+## Why a project here?
 
-Work through [00 · Orientation](../00-orientation/) and [01 · Platform Foundations](../01-platform-foundations/) first. This project pulls together Containerization and Kubernetes Fundamentals.
+Theory is scaffolding; a project is where it becomes skill. Reading about RBAC and
+ResourceQuotas is not the same as standing up three team namespaces, wiring
+least-privilege access, and watching a quota stop a runaway deployment. This
+project also gives you your first **portfolio piece**: a documented, reproducible
+platform foundation.
 
-## Want to help build this section?
+Start here: **[container-platform-foundation/](./container-platform-foundation/README.md)**.
 
-Contributions are welcome. Start from the [module template](../shared/templates/module-template.md)
-and read [CONTRIBUTING.md](../CONTRIBUTING.md).
+---
+
+_Previous:_ [03 · Kubernetes Fundamentals](../03-kubernetes-fundamentals/)
+· _Next:_ [05 · Infrastructure as Code](../05-infrastructure-as-code/)

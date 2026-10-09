@@ -1,0 +1,23 @@
+# BROKEN — Failure 1: OOMKilled.
+# Symptom: the container is killed and restarts repeatedly (RESTARTS climbs).
+# Diagnose:
+#   kubectl describe pod oom-app        # look for  Last State: Terminated, Reason: OOMKilled
+# The app allocates ~128 MB, but the memory LIMIT is far too low.
+# Fix the manifest, delete the Pod, and re-apply.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: oom-app
+  labels:
+    lab: debug
+spec:
+  containers:
+    - name: hungry
+      image: polinux/stress:latest
+      command: ["stress"]
+      args: ["--vm", "1", "--vm-bytes", "128M", "--vm-hang", "1"]
+      resources:
+        requests:
+          memory: 16Mi
+        limits:
+          memory: 32Mi

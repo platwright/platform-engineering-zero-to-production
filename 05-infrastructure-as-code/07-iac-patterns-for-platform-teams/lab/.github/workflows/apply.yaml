@@ -1,0 +1,34 @@
+# EXAMPLE workflow (inert here — GitHub only runs workflows in the repo-root
+# .github/workflows). Apply on merge to main: the ONLY path that mutates real
+# infrastructure. Humans hold no prod apply credentials; CI authenticates via OIDC.
+# max-parallel: 1 promotes in order (dev → staging → prod).
+name: terraform-apply
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "environments/**"
+      - "modules/**"
+
+permissions:
+  contents: read
+  id-token: write # for cloud OIDC auth in production
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        environment: [dev, staging, prod]
+    defaults:
+      run:
+        working-directory: environments/${{ matrix.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: Init
+        run: terraform init -input=false
+      - name: Apply
+        run: terraform apply -input=false -auto-approve

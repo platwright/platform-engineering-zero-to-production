@@ -1,0 +1,16 @@
+# A hardened image: a static Go binary on a minimal, non-root distroless base.
+# No shell, no package manager, not root — a very small attack surface.
+
+# Stage 1 — build a fully static binary (CGO disabled, so no libc dependency).
+FROM golang:1.23-alpine AS build
+WORKDIR /src
+COPY go.mod ./
+COPY main.go ./
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /app .
+
+# Stage 2 — ship it on distroless "nonroot" (runs as UID 65532; no shell inside).
+FROM gcr.io/distroless/static-debian12:nonroot
+COPY --from=build /app /app
+USER nonroot
+EXPOSE 8080
+ENTRYPOINT ["/app"]

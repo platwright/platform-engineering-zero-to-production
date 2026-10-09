@@ -10,9 +10,41 @@ curriculum progress. See the [ROADMAP](./ROADMAP.md) for the full plan and statu
 
 ### Planned
 
-- Phase 2 — Containerization (module `02`).
-- Phase 3 — Kubernetes Fundamentals (module `03`).
+- Phase 5 — CI/CD for Platform Teams (module `06`).
+- Phase 6 — Kubernetes Package Management (module `07`).
 - Remaining phases and projects per the [ROADMAP](./ROADMAP.md).
+
+## [0.2.0] — 2026-10-09
+
+Containers through Infrastructure as Code: four more modules, including the first
+hands-on project.
+
+### Added
+
+- **Module 02 — Containerization** (complete) — 7 submodules, each a full lesson
+  and lab: container fundamentals (namespaces/cgroups/OCI), Dockerfiles and image
+  building, container networking, container storage, container security, registries,
+  and multi-platform builds & optimization. Runnable starter files (Dockerfiles,
+  a Go app, multi-arch + hardened builds).
+- **Module 03 — Kubernetes Fundamentals** (complete) — 9 submodules, each a full
+  lesson and lab on a free local `kind` cluster: architecture, workloads, services
+  & networking, configuration, storage, RBAC, resource management, health &
+  scheduling, and a debugging lab with five pre-broken manifests.
+- **Project 1 — Container Platform Foundation** (complete) — a multi-team cluster
+  foundation built in two passes: a free local Pass 1 (namespaces with Pod Security
+  Admission, least-privilege RBAC, LimitRanges/ResourceQuotas, a hardened workload,
+  bootstrap/cleanup scripts) and a Pass 2 production roadmap. Includes an
+  architecture doc, four ADRs, a staged build guide, an onboarding guide, runbooks,
+  and CI/Terraform/Helm scaffolding.
+- **Module 05 — Infrastructure as Code** (complete) — 7 submodules, each a full
+  lesson and cost-free local lab: IaC principles, Terraform fundamentals, state
+  management, modules, testing & quality (Terratest, tfsec/Checkov, OPA/Conftest),
+  Crossplane, and IaC patterns for platform teams. Starter `.tf` modules, a Go
+  Terratest, Rego policy, and Crossplane manifests.
+
+### Changed
+
+- `ROADMAP.md` updated: modules `02`–`05` marked complete with per-submodule links.
 
 ## [0.1.0] — 2026-10-09
 
@@ -48,5 +80,6 @@ The foundation release: repository scaffolding plus the first two modules.
   - `05` Platform Team Topology
   - Each with a full lesson and a hands-on lab.
 
-[Unreleased]: ../../compare/v0.1.0...HEAD
+[Unreleased]: ../../compare/v0.2.0...HEAD
+[0.2.0]: ../../releases/tag/v0.2.0
 [0.1.0]: ../../releases/tag/v0.1.0

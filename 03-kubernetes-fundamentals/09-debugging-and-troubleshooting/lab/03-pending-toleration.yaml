@@ -1,0 +1,20 @@
+# BROKEN — Failure 3: Pending (never scheduled).
+# Symptom: STATUS stays Pending forever.
+# Diagnose:
+#   kubectl describe pod gpu-job   # Events: 0/3 nodes are available: ... untolerated taint
+# This Pod targets the "gpu" node (nodeSelector workload=gpu), but that node was
+# tainted dedicated=gpu:NoSchedule in the lab Setup, and this Pod has no matching
+# toleration — so it cannot land anywhere.
+# Fix: add a toleration for the taint, then re-apply.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gpu-job
+  labels:
+    lab: debug
+spec:
+  nodeSelector:
+    workload: gpu
+  containers:
+    - name: app
+      image: nginx:1.27

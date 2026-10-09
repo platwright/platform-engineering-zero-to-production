@@ -1,0 +1,9 @@
+# 1) A no-cloud provider. NopResource managed resources become "Ready" on a timer
+#    without touching any cloud — perfect for learning Crossplane mechanics free.
+#    Check https://marketplace.upbound.io for the latest version tag.
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-nop
+spec:
+  package: xpkg.upbound.io/crossplane-contrib/provider-nop:v0.4.0

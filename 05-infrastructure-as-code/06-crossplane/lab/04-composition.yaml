@@ -1,0 +1,42 @@
+# 4) The Composition implements an XPostgreSQLInstance. It runs a function pipeline
+#    that creates one NopResource (our stand-in for a real database) and patches the
+#    requested version onto it. Swap the NopResource for a real CloudSQLInstance +
+#    Database + User and developers' claims would provision a real database unchanged.
+#
+#    Crossplane marks the XR/claim Ready automatically once the composed NopResource
+#    becomes Ready (after its 5s timer below).
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: postgresqlinstance-nop
+  labels:
+    environment: production
+spec:
+  compositeTypeRef:
+    apiVersion: platform.example.com/v1alpha1
+    kind: XPostgreSQLInstance
+  mode: Pipeline
+  pipeline:
+    - step: patch-and-transform
+      functionRef:
+        name: function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          - name: database
+            base:
+              apiVersion: nop.crossplane.io/v1alpha1
+              kind: NopResource
+              spec:
+                forProvider:
+                  conditionAfter:
+                    - conditionType: Ready
+                      conditionStatus: "True"
+                      time: 5s
+                  fields:
+                    engine: postgres
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.parameters.version
+                toFieldPath: spec.forProvider.fields.engineVersion

@@ -1,0 +1,15 @@
+# 5) THE DEVELOPER'S REQUEST. This is all an app team writes to get a database.
+#    They never see providers, compositions, or managed resources — just this claim.
+#    compositionSelector matches the Composition labelled environment: production.
+apiVersion: platform.example.com/v1alpha1
+kind: PostgreSQLInstance
+metadata:
+  name: my-app-db
+  namespace: default
+spec:
+  parameters:
+    storageGB: 20
+    version: "15"
+  compositionSelector:
+    matchLabels:
+      environment: production

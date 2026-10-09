@@ -1,0 +1,18 @@
+# Backend migration demo.
+#
+# Step 1 of the lab runs on the DEFAULT local backend (state in ./terraform.tfstate).
+# To practice a backend migration WITHOUT any cloud cost, copy this file to
+# `backend.tf` and run `terraform init -migrate-state`. Terraform will move your
+# existing state into ./state/platform.tfstate.
+#
+#   cp backend.tf.example backend.tf
+#   terraform init -migrate-state
+#
+# In production this same block would instead be a "gcs" or "s3" backend — the
+# migration mechanics are identical, only the storage location changes.
+
+terraform {
+  backend "local" {
+    path = "state/platform.tfstate"
+  }
+}

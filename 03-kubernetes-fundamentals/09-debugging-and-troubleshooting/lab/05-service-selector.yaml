@@ -1,0 +1,40 @@
+# BROKEN — Failure 5: Service returns nothing (not routable).
+# Symptom: the Pods are Running, but curling the Service fails / times out.
+# Diagnose:
+#   kubectl get endpointslices -l kubernetes.io/service-name=shop-api -o wide  # NO endpoints
+#   kubectl get pods --show-labels            # pods are app=shop-api
+#   kubectl get svc shop-api -o jsonpath='{.spec.selector}'   # selector is app=shop (mismatch!)
+# The Service selector does not match the Pod labels, so its EndpointSlice is empty.
+# Fix: correct the Service selector to match the Pods, then re-apply.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop-api
+  labels:
+    lab: debug
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: shop-api
+  template:
+    metadata:
+      labels:
+        app: shop-api
+    spec:
+      containers:
+        - name: api
+          image: traefik/whoami:v1.10.2
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop-api
+spec:
+  selector:
+    app: shop
+  ports:
+    - port: 80
+      targetPort: 80

@@ -1,0 +1,10 @@
+# Three nodes. The lab's Setup step taints and labels the LAST worker as a
+# "gpu" node so that Failure 3 (missing toleration) reproduces, while the other
+# worker stays schedulable for the rest of the broken workloads.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: pe-debug
+nodes:
+  - role: control-plane
+  - role: worker
+  - role: worker

@@ -1,0 +1,47 @@
+# 3) The XRD defines a NEW self-service API: XPostgreSQLInstance, with a namespaced
+#    claim named PostgreSQLInstance. This is the CONTRACT developers consume — they
+#    can only ask for what this schema allows.
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xpostgresqlinstances.platform.example.com
+spec:
+  group: platform.example.com
+  names:
+    kind: XPostgreSQLInstance
+    plural: xpostgresqlinstances
+  claimNames:
+    kind: PostgreSQLInstance
+    plural: postgresqlinstances
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                parameters:
+                  type: object
+                  properties:
+                    storageGB:
+                      type: integer
+                      description: Requested storage size in GB.
+                      minimum: 1
+                      maximum: 1000
+                    version:
+                      type: string
+                      description: PostgreSQL major version.
+                  required:
+                    - storageGB
+                    - version
+              required:
+                - parameters
+            status:
+              type: object
+              properties:
+                ready:
+                  type: boolean

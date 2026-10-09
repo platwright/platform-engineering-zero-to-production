@@ -1,0 +1,20 @@
+# Scale the 'web' Deployment between 1 and 10 replicas, targeting 50% CPU
+# utilization (as a percentage of each Pod's 200m CPU request).
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: web
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: web
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50

@@ -1,0 +1,15 @@
+# A ClusterIP Service: a stable name + virtual IP in front of the backend Pods.
+# The selector (app: backend) must match the Pods' labels or the EndpointSlice
+# will be empty and nothing is reachable.
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

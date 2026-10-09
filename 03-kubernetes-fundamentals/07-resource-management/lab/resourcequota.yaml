@@ -1,0 +1,16 @@
+# A total budget for the team-a namespace. The sum of all Pods' requests/limits
+# may not exceed these, and at most 10 Pods may exist. With a quota in place,
+# every Pod MUST declare resources (the LimitRange supplies defaults for those
+# that don't).
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: team-budget
+  namespace: team-a
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.cpu: "2"
+    limits.memory: 2Gi
+    pods: "10"

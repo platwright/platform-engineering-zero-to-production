@@ -1,0 +1,78 @@
+# RBAC for team-a: least privilege.
+# - "team-owner" can manage everyday workloads in team-a, and nothing elsewhere.
+# - "ci-deployer" is a ServiceAccount that can ship Deployments/Services/ConfigMaps
+#   and read pods/logs — but cannot read Secrets broadly or touch other namespaces.
+#
+# There are no real users in a kind cluster, so the human RoleBinding targets a
+# Group ("team-a"). Test it with impersonation, e.g.:
+#   kubectl auth can-i create deployments -n team-a --as-group=team-a --as alice
+#   kubectl auth can-i create deployments -n team-a \
+#     --as=system:serviceaccount:team-a:ci-deployer
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: team-owner
+  namespace: team-a
+rules:
+  - apiGroups: [""]
+    resources: [pods, pods/log, services, configmaps, secrets, persistentvolumeclaims, events]
+    verbs: [get, list, watch, create, update, patch, delete]
+  - apiGroups: ["apps"]
+    resources: [deployments, replicasets, statefulsets, daemonsets]
+    verbs: [get, list, watch, create, update, patch, delete]
+  - apiGroups: ["batch"]
+    resources: [jobs, cronjobs]
+    verbs: [get, list, watch, create, update, patch, delete]
+  - apiGroups: ["autoscaling"]
+    resources: [horizontalpodautoscalers]
+    verbs: [get, list, watch, create, update, patch, delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: team-a-owners
+  namespace: team-a
+subjects:
+  - kind: Group
+    name: team-a
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: team-owner
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ci-deployer
+  namespace: team-a
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ci-deployer
+  namespace: team-a
+rules:
+  - apiGroups: ["apps"]
+    resources: [deployments]
+    verbs: [get, list, watch, create, update, patch]
+  - apiGroups: [""]
+    resources: [services, configmaps]
+    verbs: [get, list, watch, create, update, patch]
+  - apiGroups: [""]
+    resources: [pods, pods/log]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ci-deployer-binding
+  namespace: team-a
+subjects:
+  - kind: ServiceAccount
+    name: ci-deployer
+    namespace: team-a
+roleRef:
+  kind: Role
+  name: ci-deployer
+  apiGroup: rbac.authorization.k8s.io

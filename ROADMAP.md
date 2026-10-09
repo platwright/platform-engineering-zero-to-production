@@ -11,10 +11,10 @@ is developed in the open, so each module is marked with its current status.
 | 🚧 | In progress / scaffolded — outline exists, content being written |
 | 🗓️ | Planned — not yet started |
 
-> **Current state:** Foundations are complete. **[00 · Orientation](./00-orientation/)**
-> and **[01 · Platform Foundations](./01-platform-foundations/)** are done. Everything
-> below them is scaffolded and in progress. Want to help? See
-> [CONTRIBUTING.md](./CONTRIBUTING.md).
+> **Current state:** Modules **00–05 are complete** — Orientation, Platform
+> Foundations, Containerization, Kubernetes Fundamentals, Project 1 (Container
+> Platform Foundation), and Infrastructure as Code. Phases 06 and beyond are
+> scaffolded and in progress. Want to help? See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
@@ -42,25 +42,43 @@ is developed in the open, so each module is marked with its current status.
 
 ### Phase 2 — Containerization
 
-- 🚧 **[02 · Containerization](./02-containerization/)**
-  - Container fundamentals · Dockerfiles & image building · container networking ·
-    container storage · container security · registries · multi-stage builds & optimization
+- ✅ **[02 · Containerization](./02-containerization/)**
+  - [01 · Container Fundamentals](./02-containerization/01-container-fundamentals/)
+  - [02 · Dockerfile and Image Building](./02-containerization/02-dockerfile-and-image-building/)
+  - [03 · Container Networking](./02-containerization/03-container-networking/)
+  - [04 · Container Storage](./02-containerization/04-container-storage/)
+  - [05 · Container Security](./02-containerization/05-container-security/)
+  - [06 · Container Registries](./02-containerization/06-container-registries/)
+  - [07 · Multi-Platform Builds and Optimization](./02-containerization/07-multi-stage-builds-and-optimization/)
 
 ### Phase 3 — Kubernetes Fundamentals
 
-- 🚧 **[03 · Kubernetes Fundamentals](./03-kubernetes-fundamentals/)**
-  - Architecture · workloads · services & networking · configuration · storage ·
-    RBAC · resource management · health & scheduling · debugging & troubleshooting
+- ✅ **[03 · Kubernetes Fundamentals](./03-kubernetes-fundamentals/)**
+  - [01 · Kubernetes Architecture](./03-kubernetes-fundamentals/01-kubernetes-architecture/)
+  - [02 · Workloads](./03-kubernetes-fundamentals/02-workloads/)
+  - [03 · Services and Networking](./03-kubernetes-fundamentals/03-services-and-networking/)
+  - [04 · Configuration](./03-kubernetes-fundamentals/04-configuration/)
+  - [05 · Storage](./03-kubernetes-fundamentals/05-storage/)
+  - [06 · RBAC](./03-kubernetes-fundamentals/06-rbac/)
+  - [07 · Resource Management](./03-kubernetes-fundamentals/07-resource-management/)
+  - [08 · Health and Scheduling](./03-kubernetes-fundamentals/08-health-and-scheduling/)
+  - [09 · Debugging and Troubleshooting](./03-kubernetes-fundamentals/09-debugging-and-troubleshooting/)
 
 ### Project 1
 
-- 🚧 **[04 · Platform Project 01 — Container Platform Foundation](./04-platform-project-01/)**
+- ✅ **[04 · Platform Project 01 — Container Platform Foundation](./04-platform-project-01/)**
+  - [Project brief & build guide](./04-platform-project-01/container-platform-foundation/README.md)
 
 ### Phase 4 — Infrastructure as Code
 
-- 🚧 **[05 · Infrastructure as Code](./05-infrastructure-as-code/)**
-  - IaC principles · Terraform fundamentals · state management · modules ·
-    testing & quality · Crossplane · IaC patterns for platform teams
+- ✅ **[05 · Infrastructure as Code](./05-infrastructure-as-code/)**
+  - [01 · IaC Principles](./05-infrastructure-as-code/01-iac-principles/)
+  - [02 · Terraform Fundamentals](./05-infrastructure-as-code/02-terraform-fundamentals/)
+  - [03 · Terraform State Management](./05-infrastructure-as-code/03-terraform-state-management/)
+  - [04 · Terraform Modules](./05-infrastructure-as-code/04-terraform-modules/)
+  - [05 · Terraform Testing and Quality](./05-infrastructure-as-code/05-terraform-testing-and-quality/)
+  - [06 · Crossplane](./05-infrastructure-as-code/06-crossplane/)
+  - [07 · IaC Patterns for Platform Teams](./05-infrastructure-as-code/07-iac-patterns-for-platform-teams/)
 
 ### Phase 5 — CI/CD for Platform Teams
 

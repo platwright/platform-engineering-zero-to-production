@@ -1,0 +1,36 @@
+# EXAMPLE workflow (inert here — GitHub only runs workflows in the repo-root
+# .github/workflows). Plan on PR: fmt, validate, and plan every environment so
+# reviewers see exactly what would change. This is one half of "the pipeline is the
+# only door" governance pattern.
+name: terraform-plan
+
+on:
+  pull_request:
+    paths:
+      - "environments/**"
+      - "modules/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [dev, staging, prod]
+    defaults:
+      run:
+        working-directory: environments/${{ matrix.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: Format check
+        run: terraform fmt -check -recursive
+      - name: Init
+        run: terraform init -input=false
+      - name: Validate
+        run: terraform validate
+      - name: Plan
+        run: terraform plan -input=false -no-color -out=tfplan

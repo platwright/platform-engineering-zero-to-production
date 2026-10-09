@@ -1,0 +1,22 @@
+# A long-lived client Pod with network tools (curl, nslookup, dig) so you can
+# exec in and test service discovery from inside the cluster.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: netshoot
+          image: nicolaka/netshoot:v0.13
+          command: ["sleep", "infinity"]

@@ -1,0 +1,45 @@
+# Default and maximum container resources per team namespace.
+# A container that omits requests/limits inherits these defaults; one that asks
+# for more than the max is rejected. This stops both "no limits" pods and
+# single pods trying to grab the whole namespace budget.
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: default-limits
+  namespace: team-a
+spec:
+  limits:
+    - type: Container
+      default: # default limit if none specified
+        cpu: 500m
+        memory: 512Mi
+      defaultRequest: # default request if none specified
+        cpu: 100m
+        memory: 128Mi
+      max:
+        cpu: "2"
+        memory: 2Gi
+      min:
+        cpu: 10m
+        memory: 16Mi
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: default-limits
+  namespace: team-b
+spec:
+  limits:
+    - type: Container
+      default:
+        cpu: 500m
+        memory: 512Mi
+      defaultRequest:
+        cpu: 100m
+        memory: 128Mi
+      max:
+        cpu: "2"
+        memory: 2Gi
+      min:
+        cpu: 10m
+        memory: 16Mi

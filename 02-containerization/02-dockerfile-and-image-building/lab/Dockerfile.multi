@@ -1,0 +1,13 @@
+# Multi-stage build: compile in the toolchain image, ship only the static
+# binary on a small Debian runtime.
+FROM golang:1.22 AS build
+WORKDIR /src
+COPY go.mod ./
+COPY main.go ./
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /bin/hello .
+
+FROM debian:12-slim
+COPY --from=build /bin/hello /bin/hello
+EXPOSE 8080
+USER 1000:1000
+CMD ["/bin/hello"]

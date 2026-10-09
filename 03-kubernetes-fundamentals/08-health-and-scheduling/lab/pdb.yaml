@@ -1,0 +1,13 @@
+# Keep at least 2 of the 3 web replicas available during VOLUNTARY disruptions
+# (node drains, autoscaler). A node drain will evict web Pods only as fast as this
+# budget allows. Note: minAvailable is deliberately LESS than replicas, or a drain
+# would deadlock.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: web-pdb
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: web

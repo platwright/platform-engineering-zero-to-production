@@ -1,0 +1,27 @@
+# BROKEN — Failure 2: ImagePullBackOff.
+# Symptom: the Pod never starts; STATUS is ErrImagePull / ImagePullBackOff.
+# Diagnose:
+#   kubectl describe deployment/pod   # Events show: Failed to pull image "...": not found
+# The image tag does not exist.
+# Fix the image reference, then re-apply.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    lab: debug
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-img
+  template:
+    metadata:
+      labels:
+        app: web-img
+    spec:
+      containers:
+        - name: web
+          image: nginx:1.27-thistagdoesnotexist
+          ports:
+            - containerPort: 80

@@ -1,0 +1,18 @@
+# Least-privilege permissions for a deploy pipeline, scoped to the my-app namespace.
+# Deliberately NO 'delete', NO access to secrets, NO namespace or node access.
+# Note the explicit resource/verb lists — never use wildcards ("*") here.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: deploy-manager
+  namespace: my-app
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["services", "configmaps"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]

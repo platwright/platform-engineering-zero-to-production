@@ -1,0 +1,43 @@
+# A headless Service (clusterIP: None) gives each StatefulSet Pod a stable DNS name.
+# Networking details are covered in Module 03.3; here it just enables stable identity.
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  labels:
+    app: web-sts
+spec:
+  clusterIP: None
+  selector:
+    app: web-sts
+  ports:
+    - name: http
+      port: 80
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+  serviceName: web
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-sts
+  template:
+    metadata:
+      labels:
+        app: web-sts
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 2
+            periodSeconds: 5

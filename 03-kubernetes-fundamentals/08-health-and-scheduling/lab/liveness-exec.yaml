@@ -1,0 +1,17 @@
+# A container that is healthy for 30s (the file exists), then unhealthy (the file is
+# removed). The liveness probe runs `cat /tmp/healthy`; once that fails, the kubelet
+# RESTARTS the container — watch the RESTARTS column climb.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-demo
+spec:
+  containers:
+    - name: app
+      image: busybox:1.36
+      args: ["/bin/sh", "-c", "touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600"]
+      livenessProbe:
+        exec:
+          command: ["cat", "/tmp/healthy"]
+        initialDelaySeconds: 5
+        periodSeconds: 5

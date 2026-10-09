@@ -1,0 +1,9 @@
+# Three nodes so you can spread replicas, taint a node, and drain one while the
+# others keep the service running.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: pe-sched
+nodes:
+  - role: control-plane
+  - role: worker
+  - role: worker

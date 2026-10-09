@@ -1,0 +1,87 @@
+# A hardened "golden-path" sample workload for team-a.
+# It satisfies the "restricted" Pod Security Standard enforced on the namespace:
+# non-root, read-only root filesystem, all capabilities dropped, no privilege
+# escalation, and a RuntimeDefault seccomp profile. The writable paths nginx needs
+# are provided by emptyDir volumes instead of a writable root filesystem.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello
+  namespace: team-a
+  labels:
+    app: hello
+    platform.example.com/team: team-a
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+        platform.example.com/team: team-a
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: nginx
+          image: nginxinc/nginx-unprivileged:stable-alpine
+          ports:
+            - containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: cache
+              mountPath: /var/cache/nginx
+            - name: run
+              mountPath: /var/run
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
+        - name: run
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello
+  namespace: team-a
+  labels:
+    app: hello
+spec:
+  selector:
+    app: hello
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP

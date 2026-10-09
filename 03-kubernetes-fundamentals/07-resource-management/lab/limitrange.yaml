@@ -1,0 +1,23 @@
+# Per-container defaults and bounds for the team-a namespace.
+# - Pods that omit resources get the default request/limit (so nothing is BestEffort).
+# - Pods asking for more than 'max' (or less than 'min') are rejected at admission.
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: defaults
+  namespace: team-a
+spec:
+  limits:
+    - type: Container
+      defaultRequest:
+        cpu: 100m
+        memory: 64Mi
+      default:
+        cpu: 200m
+        memory: 128Mi
+      min:
+        cpu: 10m
+        memory: 16Mi
+      max:
+        cpu: "1"
+        memory: 512Mi

@@ -1,0 +1,9 @@
+# 2) The composition function that patches values from the XR onto composed
+#    resources. Modern Crossplane runs Compositions as a pipeline of functions.
+#    Check https://marketplace.upbound.io for the latest version tag.
+apiVersion: pkg.crossplane.io/v1
+kind: Function
+metadata:
+  name: function-patch-and-transform
+spec:
+  package: xpkg.upbound.io/crossplane-contrib/function-patch-and-transform:v0.8.2

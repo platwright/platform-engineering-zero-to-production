@@ -1,0 +1,73 @@
+# Reference CI pipeline for the Container Platform Foundation (Pass 2).
+#
+# This is a teaching reference you complete in Phase 5 (CI/CD). It is NOT an active
+# workflow here — GitHub only runs workflows from the repository ROOT .github/.
+# When adopting it for a real service, place it in that service's repo root and
+# pin every action to a commit SHA (shown with version tags here for readability).
+
+name: container-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write # keyless signing via OIDC
+
+env:
+  IMAGE: ghcr.io/your-org/hello
+
+jobs:
+  build-scan-sign-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (load locally for scanning)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: ${{ env.IMAGE }}:ci
+
+      # Fail the pipeline if CRITICAL vulnerabilities are found (requirement #5).
+      - name: Scan with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE }}:ci
+          exit-code: "1"
+          severity: CRITICAL
+          ignore-unfixed: true
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push by digest
+        if: github.event_name != 'pull_request'
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE }}:${{ github.sha }}
+
+      - name: Install Cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@v3
+
+      # Keyless signing — no private key, identity proven via OIDC.
+      - name: Sign the image by digest
+        if: github.event_name != 'pull_request'
+        run: cosign sign --yes "${IMAGE}@${{ steps.push.outputs.digest }}"

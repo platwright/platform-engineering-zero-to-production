@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  # Scalar values — good candidates for environment variables.
+  LOG_LEVEL: "info"
+  FEATURE_NEW_UI: "false"
+  # A whole config file — good candidate for a volume mount (can hot-reload).
+  app.conf: |
+    # application configuration
+    log_level = info
+    greeting  = Hello from ConfigMap v1
