@@ -1,0 +1,11 @@
+# The Environment applied via Server-Side Apply as field manager "team-a".
+# kubectl apply --server-side --field-manager=team-a -f environment-sample.yaml
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: payments-dev
+spec:
+  team: payments
+  tier: dev
+  replicas: 1
+  costCenter: cc-1001

@@ -1,0 +1,26 @@
+# Zero-account sync-wave demo (no Git repo of your own required).
+# This Application points at the public argocd-example-apps "sync-waves" path,
+# whose resources carry sync-wave annotations and PreSync/Sync hooks. Sync it and
+# watch Argo CD apply resources wave by wave instead of all at once.
+#
+#   kubectl apply -f application-sync-waves.yaml
+#   argocd app sync sync-waves   # observe the ordered waves in the output / UI
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sync-waves
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps
+    targetRevision: HEAD
+    path: sync-waves
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sync-waves-demo
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

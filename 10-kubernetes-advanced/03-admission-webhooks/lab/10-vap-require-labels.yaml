@@ -1,0 +1,36 @@
+# The NO-SERVER option: a pure-CEL ValidatingAdmissionPolicy that REQUIRES Pods in
+# managed namespaces to carry team and cost-center labels. No TLS, no pods, no
+# failurePolicy outage surface. Apply with: kubectl apply -f 10-vap-require-labels.yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: require-cost-labels
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  validations:
+    - expression: "has(object.metadata.labels) && 'platform.example.com/team' in object.metadata.labels"
+      message: "pods in managed namespaces must have a platform.example.com/team label"
+      reason: Invalid
+    - expression: "has(object.metadata.labels) && 'platform.example.com/cost-center' in object.metadata.labels"
+      message: "pods in managed namespaces must have a platform.example.com/cost-center label"
+      reason: Invalid
+---
+# The binding selects WHERE the policy applies: only managed namespaces, and it Denies.
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: require-cost-labels-binding
+spec:
+  policyName: require-cost-labels
+  validationActions:
+    - Deny
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        platform.example.com/managed-by: namespace-provisioner

@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# dev = "small and verbose": one replica, a slightly older image, debug config.
+namespace: web-dev
+namePrefix: dev-
+
+resources:
+  - ../../base
+
+# Transformer: set the replica count by resource name (no patch file needed).
+replicas:
+  - name: web
+    count: 1
+
+# Transformer: retag the image without editing the base Deployment.
+images:
+  - name: ghcr.io/stefanprodan/podinfo
+    newTag: "6.7.0"
+
+# Strategic-merge patch: merged field-by-field into the base (containers by name).
+patches:
+  - path: resources-patch.yaml
+    target:
+      kind: Deployment
+      name: web
+
+# Generator: a ConfigMap whose name gets a content hash, so changing it rolls pods.
+configMapGenerator:
+  - name: web-config
+    literals:
+      - LOG_LEVEL=debug

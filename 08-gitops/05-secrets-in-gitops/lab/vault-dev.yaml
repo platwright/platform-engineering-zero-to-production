@@ -1,0 +1,71 @@
+# A local HashiCorp Vault in DEV MODE to act as the external secret backend.
+# Dev mode auto-unseals, keeps data in memory, and sets a known root token — it is
+# for LABS ONLY. Never run -dev or a root token in production.
+#
+#   kubectl apply -f vault-dev.yaml
+#   kubectl -n vault rollout status deploy/vault
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vault
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault
+  namespace: vault
+  labels:
+    app: vault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault
+  template:
+    metadata:
+      labels:
+        app: vault
+    spec:
+      containers:
+        - name: vault
+          image: hashicorp/vault:1.21
+          args:
+            - server
+            - -dev
+            - -dev-listen-address=0.0.0.0:8200
+          env:
+            - name: VAULT_DEV_ROOT_TOKEN_ID
+              value: "root"
+            - name: VAULT_DEV_LISTEN_ADDRESS
+              value: "0.0.0.0:8200"
+          ports:
+            - name: http
+              containerPort: 8200
+          readinessProbe:
+            httpGet:
+              path: /v1/sys/health?standbyok=true
+              port: 8200
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault
+  namespace: vault
+  labels:
+    app: vault
+spec:
+  selector:
+    app: vault
+  ports:
+    - name: http
+      port: 8200
+      targetPort: 8200

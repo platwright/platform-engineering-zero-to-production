@@ -1,0 +1,49 @@
+# The APP-OF-APPS pattern: one root Application whose source renders OTHER
+# Application manifests. Sync this root and it creates the child Applications,
+# which in turn deploy workloads — a single entry point to bootstrap many apps.
+#
+# This root uses the upstream "apps" Helm chart (a maintained app-of-apps example)
+# and overrides its values so it generates only two clean children:
+# example.guestbook and example.kustomize-guestbook. See ./apps/*.yaml for the
+# equivalent children written as plain manifests (what you'd keep in your own repo).
+#
+#   kubectl apply -f app-of-apps.yaml
+#   kubectl -n argocd get applications   # -> app-of-apps + example.guestbook + example.kustomize-guestbook
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-of-apps
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps
+    targetRevision: HEAD
+    path: apps
+    helm:
+      valuesObject:
+        config:
+          spec:
+            destination:
+              server: https://kubernetes.default.svc
+            source:
+              repoURL: https://github.com/argoproj/argocd-example-apps
+              targetRevision: HEAD
+        # Override the default (long, plugin-heavy) list with two clean children.
+        # Each child sets destination.namespace (the chart requires it).
+        applications:
+          - name: guestbook
+            destination:
+              namespace: guestbook
+          - name: kustomize-guestbook
+            destination:
+              namespace: kustomize-guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,10 @@
+# The environment delta Kustomize applies on top of the Helm-rendered base:
+# scale to 3 and tag the object so you can see which method deployed it.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    deployed-with: helm-plus-kustomize
+spec:
+  replicas: 3

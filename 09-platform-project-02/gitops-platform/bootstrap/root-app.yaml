@@ -1,0 +1,23 @@
+# The app-of-apps ROOT. You apply THIS once; it syncs config-repo/argocd/, which
+# contains the platform Application and the two ApplicationSets — which in turn
+# create every per-environment Application. One apply bootstraps the whole platform.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: __CONFIG_REPO_URL__
+    targetRevision: main
+    path: argocd
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

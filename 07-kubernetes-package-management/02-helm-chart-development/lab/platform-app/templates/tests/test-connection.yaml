@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "platform-app.fullname" . }}-test-connection"
+  labels:
+    {{- include "platform-app.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  # The test pod is hardened too — consistency is the point.
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65532
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: curl
+      image: curlimages/curl:8.10.1
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+      command: ["curl"]
+      args:
+        - "--silent"
+        - "--show-error"
+        - "--fail"
+        - "http://{{ include "platform-app.fullname" . }}:{{ .Values.service.port }}{{ .Values.probes.readiness.path }}"

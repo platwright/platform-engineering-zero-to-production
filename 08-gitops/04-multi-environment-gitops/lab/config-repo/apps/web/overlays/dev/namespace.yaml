@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web-dev
+  annotations:
+    # Wave -1: the namespace is created before anything that lives in it.
+    argocd.argoproj.io/sync-wave: "-1"

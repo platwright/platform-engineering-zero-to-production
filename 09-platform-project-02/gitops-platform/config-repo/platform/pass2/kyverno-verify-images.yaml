@@ -1,0 +1,51 @@
+# Pass 2 — Kyverno: only admit Cosign-signed images from the allowed registry.
+# Requires Kyverno installed in the cluster (Phase 10). Until then this is inert
+# reference material kept out of the Pass 1 sync.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-image-signatures
+  annotations:
+    policies.kyverno.io/title: Verify Image Signatures
+    policies.kyverno.io/description: >-
+      Only images from ghcr.io/org that carry a valid Cosign (keyless) signature
+      may run. Unsigned images, or images from other registries, are rejected.
+spec:
+  validationFailureAction: Enforce
+  webhookTimeoutSeconds: 30
+  failurePolicy: Fail
+  rules:
+    - name: verify-ghcr-signatures
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      verifyImages:
+        - imageReferences:
+            - "ghcr.io/org/*"
+          mutateDigest: true
+          verifyDigest: true
+          required: true
+          attestors:
+            - count: 1
+              entries:
+                - keyless:
+                    # Keyless verification via the Sigstore public-good infrastructure.
+                    # Lock this down to YOUR CI's identity in a real deployment.
+                    issuer: "https://token.actions.githubusercontent.com"
+                    subject: "https://github.com/org/*"
+                    rekor:
+                      url: https://rekor.sigstore.dev
+    - name: block-unsigned-other-registries
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: "Images must come from ghcr.io/org (signed). Other registries are not allowed."
+        pattern:
+          spec:
+            containers:
+              - image: "ghcr.io/org/*"

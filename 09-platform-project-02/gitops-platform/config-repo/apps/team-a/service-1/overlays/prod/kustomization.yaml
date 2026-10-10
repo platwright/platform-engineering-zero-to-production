@@ -1,0 +1,12 @@
+# prod overlay: highest replica count; ArgoCD requires a MANUAL sync here.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: team-a-prod
+resources:
+  - ../../base
+replicas:
+  - name: service-1
+    count: 3
+images:
+  - name: nginxinc/nginx-unprivileged
+    newTag: stable-alpine

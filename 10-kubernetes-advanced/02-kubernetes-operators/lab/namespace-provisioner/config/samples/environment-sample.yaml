@@ -1,0 +1,11 @@
+# A sample Environment for the operator to reconcile.
+# Apply with: kubectl apply -f config/samples/environment-sample.yaml
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: payments-dev
+spec:
+  team: payments
+  tier: dev
+  replicas: 1
+  costCenter: cc-1001

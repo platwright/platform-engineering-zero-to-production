@@ -1,0 +1,23 @@
+# Strategic-merge patch: write ONLY the deltas. Kustomize merges this into the base
+# Deployment using Kubernetes' field-aware rules (the container list merges by name).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  template:
+    metadata:
+      annotations:
+        example.com/environment: dev
+    spec:
+      containers:
+        - name: web
+          # Reference the generated ConfigMap by its BASE name; Kustomize rewrites
+          # this to the hashed name (web-config-xxxxx), so a config change rolls pods.
+          envFrom:
+            - configMapRef:
+                name: web-config
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi

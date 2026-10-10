@@ -1,0 +1,15 @@
+# Prod environment overrides for the podinfo chart.
+# Same chart, different knobs: more replicas and tighter limits.
+replicaCount: 3
+
+ui:
+  message: "hello from PROD — same chart, different values"
+  color: "#0b7285"
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 250m
+    memory: 128Mi

@@ -1,0 +1,55 @@
+name: ci
+
+# Demonstrates workflow anatomy: triggers, jobs, steps, runners, contexts,
+# job outputs, `needs` ordering, and a concurrency group. Runs entirely on
+# GitHub-hosted runners — no cloud and no secrets required. Validate it with
+# `actionlint ci.yml`.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why are you running this manually?"
+        required: false
+        default: "ad-hoc run"
+
+permissions:
+  contents: read
+
+concurrency:
+  # One in-flight run per workflow+ref; a newer commit cancels the older run.
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: build (produces an output)
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Read from contexts (nothing persists between jobs but outputs)
+        run: |
+          echo "event  = ${{ github.event_name }}"
+          echo "ref    = ${{ github.ref }}"
+          echo "sha    = ${{ github.sha }}"
+          echo "actor  = ${{ github.actor }}"
+          echo "os     = ${{ runner.os }}"
+
+      - name: Compute a version and expose it as a step output
+        id: meta
+        run: echo "version=1.0.0+${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+  test:
+    name: test (ordered after build via needs)
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consume the upstream job output
+        run: echo "testing version ${{ needs.build.outputs.version }}"

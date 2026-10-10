@@ -1,0 +1,12 @@
+# staging overlay: closer to prod; auto-synced after dev.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: team-a-staging
+resources:
+  - ../../base
+replicas:
+  - name: service-1
+    count: 2
+images:
+  - name: nginxinc/nginx-unprivileged
+    newTag: stable-alpine

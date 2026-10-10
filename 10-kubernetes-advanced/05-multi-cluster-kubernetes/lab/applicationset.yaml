@@ -1,0 +1,32 @@
+# Part 2 (the DECLARATIVE fan-out). One ApplicationSet with a cluster generator
+# templates one Argo CD Application per registered cluster — so the guestbook app is
+# deployed, and kept in sync, on EVERY cluster Argo CD knows about (the hub's
+# in-cluster entry, plus the spoke once you register it).
+#
+# Apply on the hub: kubectl --context kind-pe-hub apply -f applicationset.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: guestbook-everywhere
+  namespace: argocd
+spec:
+  generators:
+    - clusters: {}            # every cluster registered with Argo CD
+  template:
+    metadata:
+      name: 'guestbook-{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps
+        targetRevision: HEAD
+        path: guestbook
+      destination:
+        server: '{{server}}'
+        namespace: guestbook
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

@@ -1,0 +1,53 @@
+name: validation
+
+# A VALIDATION pipeline: it asserts, it never mutates. It runs cheap, decisive
+# checks on every pull request, and a drift plan on a schedule. Every failure is
+# loud (non-zero exit -> red build). There is no `continue-on-error` and no `|| true`.
+
+on:
+  pull_request:
+  schedule:
+    - cron: "0 3 * * *" # nightly drift detection
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: fmt / validate / scan (fail fast, fail loud)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Format check (cheapest, most decisive — runs first)
+        run: terraform fmt -check -recursive
+
+      - name: Init (no backend) and validate
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Security scan (a finding fails the build — this is a gate)
+        uses: aquasecurity/tfsec-action@v1.0.0
+
+  drift:
+    name: drift detection (scheduled)
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Plan must be empty (exit code 2 means drift -> red)
+        run: |
+          terraform init -backend=false
+          terraform plan -detailed-exitcode

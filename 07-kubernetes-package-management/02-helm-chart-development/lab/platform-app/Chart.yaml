@@ -1,0 +1,22 @@
+apiVersion: v2
+name: platform-app
+description: >-
+  The platform golden-path workload — a hardened, autoscaled, observable service
+  that application teams adopt by overriding a handful of values.
+type: application
+# Chart (package) version. Bump on every template change.
+version: 1.0.0
+# Version of the application this chart deploys by default (informational).
+appVersion: "6.7.1"
+kubeVersion: ">=1.23.0-0"
+keywords:
+  - platform
+  - golden-path
+  - hardened
+  - paved-road
+home: https://helm.sh/docs/topics/charts/
+sources:
+  - https://helm.sh/docs/topics/charts/
+maintainers:
+  - name: Platform Team
+    email: platform@example.com

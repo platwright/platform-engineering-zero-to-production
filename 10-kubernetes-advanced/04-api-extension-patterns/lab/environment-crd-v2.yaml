@@ -1,0 +1,142 @@
+# The Environment CRD from Module 10.1, upgraded into a first-class API:
+#   - /scale subresource  (kubectl scale + HPA compatibility)
+#   - selectableFields     (server-side --field-selector on spec.tier / spec.team)
+#   - more printer columns (Replicas, Owner)
+#   - an extra CEL rule    (dev replicas cap)
+# Apply with: kubectl apply --server-side -f environment-crd-v2.yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: environments.platform.example.com
+spec:
+  group: platform.example.com
+  scope: Cluster
+  names:
+    kind: Environment
+    plural: environments
+    singular: environment
+    shortNames:
+      - env
+    categories:
+      - platform
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      subresources:
+        status: {}
+        scale:
+          specReplicasPath: .spec.replicas
+          statusReplicasPath: .status.replicas
+          labelSelectorPath: .status.selector
+      selectableFields:
+        - jsonPath: .spec.tier
+        - jsonPath: .spec.team
+      additionalPrinterColumns:
+        - name: Team
+          type: string
+          jsonPath: .spec.team
+        - name: Tier
+          type: string
+          jsonPath: .spec.tier
+        - name: Replicas
+          type: integer
+          jsonPath: .spec.replicas
+        - name: Owner
+          type: string
+          jsonPath: .spec.owner
+        - name: Phase
+          type: string
+          jsonPath: .status.phase
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+      schema:
+        openAPIV3Schema:
+          type: object
+          required:
+            - spec
+          properties:
+            spec:
+              type: object
+              required:
+                - team
+                - tier
+              x-kubernetes-validations:
+                - rule: "self.tier != 'prod' || has(self.owner)"
+                  message: "prod environments must set spec.owner"
+                - rule: "self.tier != 'prod' || self.replicas >= 2"
+                  message: "prod environments must run at least 2 replicas"
+                - rule: "self.tier != 'dev' || self.replicas <= 3"
+                  message: "dev environments may run at most 3 replicas"
+                - rule: "self.tier == oldSelf.tier"
+                  message: "spec.tier is immutable once set"
+              properties:
+                team:
+                  type: string
+                  pattern: '^[a-z][a-z0-9-]{1,30}$'
+                tier:
+                  type: string
+                  enum:
+                    - dev
+                    - staging
+                    - prod
+                owner:
+                  type: string
+                  pattern: '^[^@ ]+@[^@ ]+\.[^@ ]+$'
+                replicas:
+                  type: integer
+                  minimum: 1
+                  maximum: 20
+                  default: 1
+                costCenter:
+                  type: string
+                  pattern: '^cc-[0-9]{4}$'
+            status:
+              type: object
+              properties:
+                phase:
+                  type: string
+                  enum:
+                    - Pending
+                    - Ready
+                    - Degraded
+                observedGeneration:
+                  type: integer
+                namespace:
+                  type: string
+                replicas:
+                  type: integer
+                selector:
+                  type: string
+                conditions:
+                  type: array
+                  x-kubernetes-list-type: map
+                  x-kubernetes-list-map-keys:
+                    - type
+                  items:
+                    type: object
+                    required:
+                      - type
+                      - status
+                      - reason
+                      - lastTransitionTime
+                    properties:
+                      type:
+                        type: string
+                      status:
+                        type: string
+                        enum:
+                          - "True"
+                          - "False"
+                          - "Unknown"
+                      reason:
+                        type: string
+                      message:
+                        type: string
+                      lastTransitionTime:
+                        type: string
+                        format: date-time
+                      observedGeneration:
+                        type: integer
+                        format: int64

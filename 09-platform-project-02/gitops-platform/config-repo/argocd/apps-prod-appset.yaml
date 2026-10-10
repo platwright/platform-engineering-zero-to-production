@@ -1,0 +1,36 @@
+# ApplicationSet for PRODUCTION environments.
+# Same generation, but NO automated syncPolicy — production is a MANUAL gate. ArgoCD
+# will show prod Applications as OutOfSync after a change and wait for a human to
+# review the diff and click Sync (or run `argocd app sync`).
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps-prod
+  namespace: argocd
+spec:
+  goTemplate: false
+  generators:
+    - git:
+        repoURL: __CONFIG_REPO_URL__
+        revision: main
+        directories:
+          - path: apps/*/*/overlays/prod
+  template:
+    metadata:
+      name: "{{path[1]}}-{{path[2]}}-{{path.basename}}"
+      labels:
+        platform.example.com/team: "{{path[1]}}"
+        platform.example.com/environment: "{{path.basename}}"
+    spec:
+      project: default
+      source:
+        repoURL: __CONFIG_REPO_URL__
+        targetRevision: main
+        path: "{{path}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{path[1]}}-{{path.basename}}"
+      # No syncPolicy.automated: production requires a manual sync.
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=false

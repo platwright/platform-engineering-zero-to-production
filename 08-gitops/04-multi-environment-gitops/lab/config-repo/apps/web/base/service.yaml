@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  labels:
+    app: web
+  annotations:
+    # Wave 2: expose the workload last, once it is applied.
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 80
+      targetPort: 80

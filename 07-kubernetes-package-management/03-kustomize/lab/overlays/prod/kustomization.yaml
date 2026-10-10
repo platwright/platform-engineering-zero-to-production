@@ -1,0 +1,40 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# prod = "bigger and protected": three replicas, newer image, labels, an HPA.
+namespace: web-prod
+namePrefix: prod-
+
+resources:
+  - ../../base
+  - hpa.yaml
+
+# Transformer: replica count (the outline's prod target is replicas=3 + an HPA).
+replicas:
+  - name: web
+    count: 3
+
+# Transformer: pin the production image tag.
+images:
+  - name: ghcr.io/stefanprodan/podinfo
+    newTag: "6.7.1"
+
+# Transformer: stamp labels on every object WITHOUT touching selectors
+# (includeSelectors: false keeps the immutable selector stable across applies).
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: platform
+      environment: prod
+    includeSelectors: false
+
+# JSON patch (RFC 6902): surgical add of an env var to the first container.
+patches:
+  - target:
+      kind: Deployment
+      name: web
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env
+        value:
+          - name: PODINFO_UI_MESSAGE
+            value: "hello from the PROD overlay"

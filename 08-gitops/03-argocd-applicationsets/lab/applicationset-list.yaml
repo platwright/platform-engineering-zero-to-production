@@ -1,0 +1,35 @@
+# ApplicationSet with a LIST generator.
+# One hand-written list element -> one generated Application. Add an element and a
+# new Application appears on the next reconcile; you change DATA, not manifests.
+#
+#   kubectl apply -f applicationset-list.yaml
+#   kubectl -n argocd get applicationset,applications
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: guestbook-envs
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+          - env: prod
+  template:
+    metadata:
+      name: 'guestbook-{{env}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps
+        targetRevision: HEAD
+        path: guestbook
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'guestbook-{{env}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

@@ -1,0 +1,130 @@
+name: terraform
+
+# PROJECT 2 PATTERN: plan on PR (comment the diff), apply on merge behind an
+# environment gate, and detect drift nightly. Credentials come from keyless OIDC
+# with LEAST PRIVILEGE — the plan job is read-only; only apply can write.
+#
+# PINS: actions are referenced by tag for lab readability; pin by SHA in
+# production (Module 06.3). The cloud-auth step is commented out so this runs
+# locally against the free `local` provider; uncomment and scope it per job for
+# a real backend.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 3 * * *" # nightly drift detection
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # One state-mutating run at a time per ref; never cancel an in-flight apply.
+  group: terraform-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    name: plan (read-only) and comment on the PR
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # to post the plan comment
+      id-token: write # keyless auth to a READ-ONLY cloud role
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # - name: Authenticate to the cloud (READ-ONLY role, keyless)
+      #   uses: google-github-actions/auth@v2
+      #   with:
+      #     workload_identity_provider: projects/123/locations/global/workloadIdentityPools/github/providers/github
+      #     service_account: tf-plan-readonly@PROJECT_ID.iam.gserviceaccount.com
+
+      - name: Format check (cheapest, most decisive — runs first)
+        run: terraform fmt -check -recursive
+
+      - name: Init
+        run: terraform init -input=false
+
+      - name: Validate
+        run: terraform validate
+
+      - name: Security scan (gate)
+        uses: aquasecurity/tfsec-action@v1.0.0
+
+      - name: Plan (the review artifact)
+        run: terraform plan -input=false -no-color -out=tfplan | tee plan.txt
+
+      - name: Comment the plan on the pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('plan.txt', 'utf8').slice(0, 60000);
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: ['#### Terraform plan', '```', plan, '```'].join('\n'),
+            });
+
+  apply-dev:
+    name: apply to dev (auto on merge)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      contents: read
+      id-token: write # keyless auth to a WRITE role (apply only)
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Init
+        run: terraform init -input=false
+      - name: Apply
+        run: terraform apply -input=false -auto-approve
+
+  apply-prod:
+    name: apply to production (manual gate)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: apply-dev
+    runs-on: ubuntu-latest
+    environment: production # required-reviewer gate — pauses for approval
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Init
+        run: terraform init -input=false
+      - name: Apply
+        run: terraform apply -input=false -auto-approve
+
+  drift:
+    name: drift detection (nightly)
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Init
+        run: terraform init -input=false
+      - name: Plan must be empty (exit code 2 = drift -> red build + alert)
+        run: terraform plan -input=false -detailed-exitcode

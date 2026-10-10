@@ -1,0 +1,93 @@
+# The webhook server: ServiceAccount + RBAC (to read namespace annotations),
+# Deployment (stock python image running the ConfigMap script), and Service.
+# The secret `webhook-tls` and configmap `webhook-code` are created by gen-certs.sh.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: label-injector
+  namespace: platform-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: label-injector-read-namespaces
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: label-injector-read-namespaces
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: label-injector-read-namespaces
+subjects:
+  - kind: ServiceAccount
+    name: label-injector
+    namespace: platform-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: label-injector
+  namespace: platform-system
+  labels:
+    app: label-injector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: label-injector
+  template:
+    metadata:
+      labels:
+        app: label-injector
+    spec:
+      serviceAccountName: label-injector
+      containers:
+        - name: webhook
+          image: python:3.12-slim
+          command: ["python", "/app/webhook.py"]
+          ports:
+            - containerPort: 8443
+          readinessProbe:
+            tcpSocket:
+              port: 8443
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          volumeMounts:
+            - name: code
+              mountPath: /app
+              readOnly: true
+            - name: tls
+              mountPath: /tls
+              readOnly: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+      volumes:
+        - name: code
+          configMap:
+            name: webhook-code
+        - name: tls
+          secret:
+            secretName: webhook-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: label-injector
+  namespace: platform-system
+spec:
+  selector:
+    app: label-injector
+  ports:
+    - port: 443
+      targetPort: 8443

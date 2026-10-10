@@ -1,0 +1,20 @@
+# Added ONLY in the prod overlay. The namePrefix also renames this HPA to prod-web,
+# and Kustomize's name-reference transformer rewrites scaleTargetRef.name to match.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: web
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: web
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80

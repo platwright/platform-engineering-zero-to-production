@@ -1,0 +1,23 @@
+# DEV Application — auto-sync, no approval. Fast feedback for the candidate build.
+#
+# Point repoURL at the Git repo where you pushed ./config-repo (see the lab).
+# These three Applications would themselves live in Git and be created by an
+# app-of-apps or ApplicationSet in a real platform.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: web-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/your-org/pe-gitops-config.git
+    targetRevision: main
+    path: apps/web/overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: web-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

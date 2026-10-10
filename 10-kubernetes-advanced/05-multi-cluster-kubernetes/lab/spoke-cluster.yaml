@@ -1,0 +1,7 @@
+# The workload/spoke cluster.
+# Create with: kind create cluster --name pe-spoke --config spoke-cluster.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: pe-spoke
+nodes:
+  - role: control-plane

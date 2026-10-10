@@ -1,0 +1,73 @@
+# ILLUSTRATIVE ONLY — DO NOT APPLY.
+#
+# This shows how Cluster API (CAPI) represents a cluster as declarative resources in a
+# management cluster. Applying it does nothing useful without a CAPI management cluster
+# AND an installed infrastructure provider (Docker/AWS/GCP/Azure). It is here so you can
+# see the shape: a Cluster, a control plane, worker machines, and an infrastructure ref —
+# the reconciliation loop, aimed at clusters themselves.
+#
+# To actually try CAPI locally, follow the Cluster API Quick Start with the Docker
+# provider (clusterctl) — it is a lab in its own right and out of scope here.
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: eu-prod
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - 192.168.0.0/16
+    services:
+      cidrBlocks:
+        - 10.128.0.0/12
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    name: eu-prod-control-plane
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: DockerCluster        # swap for AWSCluster / GCPCluster / AzureCluster
+    name: eu-prod
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: KubeadmControlPlane
+metadata:
+  name: eu-prod-control-plane
+  namespace: default
+spec:
+  replicas: 1
+  version: v1.31.2
+  machineTemplate:
+    infrastructureRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: DockerMachineTemplate
+      name: eu-prod-control-plane
+  kubeadmConfigSpec:
+    initConfiguration:
+      nodeRegistration: {}
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: eu-prod-workers
+  namespace: default
+spec:
+  clusterName: eu-prod
+  replicas: 3
+  selector:
+    matchLabels: {}
+  template:
+    spec:
+      clusterName: eu-prod
+      version: v1.31.2
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          name: eu-prod-workers
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: DockerMachineTemplate
+        name: eu-prod-workers

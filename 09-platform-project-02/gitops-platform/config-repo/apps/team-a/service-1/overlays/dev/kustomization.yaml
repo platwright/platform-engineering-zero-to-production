@@ -1,0 +1,12 @@
+# dev overlay: smallest footprint, auto-synced by ArgoCD.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: team-a-dev
+resources:
+  - ../../base
+replicas:
+  - name: service-1
+    count: 1
+images:
+  - name: nginxinc/nginx-unprivileged
+    newTag: stable-alpine

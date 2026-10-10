@@ -1,0 +1,15 @@
+# Values used when installing the golden-path chart pulled from the OCI registry.
+# A consumer sets a few knobs; the chart's hardened defaults come along for free.
+replicaCount: 2
+
+# Keep it simple on a kind cluster with no metrics-server: fixed size, not an HPA.
+autoscaling:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 300m
+    memory: 128Mi

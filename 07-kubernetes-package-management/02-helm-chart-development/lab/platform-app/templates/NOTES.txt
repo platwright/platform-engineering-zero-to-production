@@ -1,0 +1,28 @@
+{{- /* Post-install/upgrade message printed to the operator. */ -}}
+platform-app "{{ .Release.Name }}" is installed in namespace "{{ .Release.Namespace }}".
+
+This release ships the hardened golden-path defaults:
+  - runs non-root with a read-only root filesystem
+  - drops ALL Linux capabilities; seccomp = RuntimeDefault
+  - resource requests and limits are set
+{{- if .Values.autoscaling.enabled }}
+  - a HorizontalPodAutoscaler ({{ .Values.autoscaling.minReplicas }}-{{ .Values.autoscaling.maxReplicas }} replicas) owns scaling
+{{- else }}
+  - {{ .Values.replicaCount }} static replica(s)
+{{- end }}
+{{- if .Values.pdb.enabled }}
+  - a PodDisruptionBudget protects availability during drains
+{{- end }}
+{{- if .Values.networkPolicy.enabled }}
+  - a default-deny NetworkPolicy restricts ingress
+{{- end }}
+
+Inspect what was created:
+  kubectl get deploy,svc,hpa,pdb,netpol -l app.kubernetes.io/instance={{ .Release.Name }} -n {{ .Release.Namespace }}
+
+Smoke-test the running release:
+  helm test {{ .Release.Name }} -n {{ .Release.Namespace }}
+
+Reach it locally:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "platform-app.fullname" . }} 8080:{{ .Values.service.port }}
+  # then browse to port 8080 on localhost

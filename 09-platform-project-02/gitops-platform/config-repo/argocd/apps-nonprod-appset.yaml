@@ -1,0 +1,40 @@
+# ApplicationSet for NON-PROD environments (dev + staging).
+# A Git directory generator finds every dev/ and staging/ overlay and generates one
+# Application per match. These auto-sync and self-heal.
+#
+# Path segments for apps/team-a/service-1/overlays/dev:
+#   path[1]=team-a  path[2]=service-1  path.basename=dev
+# so the Application is "team-a-service-1-dev" in namespace "team-a-dev".
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps-nonprod
+  namespace: argocd
+spec:
+  goTemplate: false
+  generators:
+    - git:
+        repoURL: __CONFIG_REPO_URL__
+        revision: main
+        directories:
+          - path: apps/*/*/overlays/dev
+          - path: apps/*/*/overlays/staging
+  template:
+    metadata:
+      name: "{{path[1]}}-{{path[2]}}-{{path.basename}}"
+      labels:
+        platform.example.com/team: "{{path[1]}}"
+        platform.example.com/environment: "{{path.basename}}"
+    spec:
+      project: default
+      source:
+        repoURL: __CONFIG_REPO_URL__
+        targetRevision: main
+        path: "{{path}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{path[1]}}-{{path.basename}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

@@ -1,0 +1,84 @@
+# Namespaces for the GitOps platform: one per team per environment.
+# ArgoCD manages these (they live in the config repo, synced by the platform
+# Application). Each enforces the "restricted" Pod Security Standard, so only
+# hardened pods are admitted — the same structural guardrail used in Project 1.
+#
+# These carry sync-wave "-1" so they are created BEFORE the workloads that land
+# in them (ArgoCD applies lower waves first).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-a-dev
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  labels:
+    platform.example.com/team: team-a
+    platform.example.com/environment: dev
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-a-staging
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  labels:
+    platform.example.com/team: team-a
+    platform.example.com/environment: staging
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-a-prod
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  labels:
+    platform.example.com/team: team-a
+    platform.example.com/environment: prod
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-b-dev
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  labels:
+    platform.example.com/team: team-b
+    platform.example.com/environment: dev
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-b-staging
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  labels:
+    platform.example.com/team: team-b
+    platform.example.com/environment: staging
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-b-prod
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  labels:
+    platform.example.com/team: team-b
+    platform.example.com/environment: prod
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted

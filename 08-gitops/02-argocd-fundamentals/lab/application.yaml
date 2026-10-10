@@ -1,0 +1,31 @@
+# A minimal Argo CD Application: one reconcile unit mapping a Git source to a
+# cluster destination. Apply it into the argocd namespace with:
+#   kubectl apply -f application.yaml
+#
+# It deploys the public guestbook example app and keeps it reconciled.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+  # Finalizer: on `kubectl delete application`, also prune the deployed resources.
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    # Public example repo — no credentials required.
+    repoURL: https://github.com/argoproj/argocd-example-apps
+    # Pin to a real revision in production; HEAD is fine for this lab.
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    # The cluster Argo CD runs in; address it by its in-cluster API alias.
+    server: https://kubernetes.default.svc
+    namespace: guestbook
+  syncPolicy:
+    automated:
+      prune: true       # delete resources removed from Git
+      selfHeal: true    # revert out-of-band drift back to Git
+    syncOptions:
+      - CreateNamespace=true

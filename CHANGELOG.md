@@ -10,9 +10,49 @@ curriculum progress. See the [ROADMAP](./ROADMAP.md) for the full plan and statu
 
 ### Planned
 
-- Phase 5 — CI/CD for Platform Teams (module `06`).
-- Phase 6 — Kubernetes Package Management (module `07`).
+- Phase 9 — Observability Engineering (module `11`).
+- Phase 10 — Security and Policy Engineering (module `13`).
 - Remaining phases and projects per the [ROADMAP](./ROADMAP.md).
+
+## [0.3.0] — 2026-10-10
+
+CI/CD through Kubernetes Advanced: five more modules, including the GitOps platform
+project.
+
+### Added
+
+- **Module 06 — CI/CD for Platform Teams** (complete) — 6 submodules + labs:
+  platform CI/CD fundamentals, GitHub Actions deep dive, reusable workflows &
+  composite actions, pipeline templates as a product, container build pipelines
+  (`lint → test → build → scan → sign → push`), and IaC pipelines. Runnable,
+  actionlint-clean workflow starters, a composite action, OIDC keyless-auth
+  examples, and a Terraform plan-on-PR pipeline.
+- **Module 07 — Kubernetes Package Management** (complete) — 5 submodules + labs:
+  Helm fundamentals, Helm chart development, Kustomize, Helm vs Kustomize, and OCI
+  artifacts & distribution. Includes a hardened `platform-app` Helm chart
+  (`helm lint`/`template` clean) and base+overlay Kustomize examples.
+- **Module 08 — GitOps** (complete) — 6 submodules + labs on local kind + ArgoCD:
+  GitOps principles, ArgoCD fundamentals, ApplicationSets, multi-environment GitOps
+  (folder strategy + sync waves), secrets in GitOps (ESO/Sealed Secrets/SOPS/Vault),
+  and a GitOps maturity model. Includes a hand-built reconcile loop and real ArgoCD
+  manifests.
+- **Project 2 — GitOps Platform** (complete) — a multi-team, multi-environment
+  GitOps platform: an app-of-apps root, two ApplicationSets (non-prod auto-sync vs a
+  prod manual gate), platform namespaces/quotas, and base+overlay manifests for two
+  teams across dev/staging/prod (Kustomize overlays render with replicas 1/2/3).
+  Includes an architecture doc, four ADRs, a staged build guide (promotion by PR,
+  self-heal, rollback), onboarding guide, runbooks, bootstrap/cleanup scripts, and
+  Pass-2 scaffolding (ESO + Kyverno signed-image policy).
+- **Module 10 — Kubernetes Advanced** (complete) — 5 submodules + labs: CRDs (with
+  CEL validation and a status subresource), operators (a compiling controller-runtime
+  `NamespaceProvisioner`), admission webhooks (a CEL `ValidatingAdmissionPolicy` plus
+  a mutating webhook), API extension patterns (subresources, SSA, field selectors),
+  and multi-cluster Kubernetes (two kind clusters + an ApplicationSet cluster
+  generator).
+
+### Changed
+
+- `ROADMAP.md` updated: modules `06`–`10` marked complete with per-submodule links.
 
 ## [0.2.0] — 2026-10-09
 
@@ -80,6 +120,7 @@ The foundation release: repository scaffolding plus the first two modules.
   - `05` Platform Team Topology
   - Each with a full lesson and a hands-on lab.
 
-[Unreleased]: ../../compare/v0.2.0...HEAD
+[Unreleased]: ../../compare/v0.3.0...HEAD
+[0.3.0]: ../../releases/tag/v0.3.0
 [0.2.0]: ../../releases/tag/v0.2.0
 [0.1.0]: ../../releases/tag/v0.1.0

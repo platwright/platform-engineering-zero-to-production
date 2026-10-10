@@ -1,0 +1,44 @@
+# Test Pods for the ValidatingAdmissionPolicy.
+#
+# Before the webhook exists:
+#   - compliant-pod   -> ACCEPTED (it already carries both labels)
+#   - noncompliant-pod -> REJECTED by the policy (no labels)
+#
+# After the mutating webhook is deployed, a bare Pod like noncompliant-pod gets the
+# labels injected from the namespace annotations, so it is ACCEPTED automatically.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: compliant-pod
+  namespace: team-payments
+  labels:
+    platform.example.com/team: payments
+    platform.example.com/cost-center: cc-1001
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: noncompliant-pod
+  namespace: team-payments
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi

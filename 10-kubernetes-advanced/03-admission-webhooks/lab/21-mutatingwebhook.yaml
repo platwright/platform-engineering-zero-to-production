@@ -1,0 +1,34 @@
+# The MutatingWebhookConfiguration. gen-certs.sh substitutes CA_BUNDLE_PLACEHOLDER
+# with the base64 CA that signed the server certificate, then applies this.
+#
+# Note the guardrails:
+#   - namespaceSelector limits it to managed namespaces (never kube-system).
+#   - failurePolicy: Ignore makes label injection best-effort, not a cluster outage.
+#   - sideEffects: None so dry-run works and the mutation is idempotent.
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: inject-cost-labels.platform.example.com
+webhooks:
+  - name: inject-cost-labels.platform.example.com
+    admissionReviewVersions: ["v1"]
+    sideEffects: None
+    failurePolicy: Ignore
+    timeoutSeconds: 5
+    reinvocationPolicy: IfNeeded
+    clientConfig:
+      service:
+        name: label-injector
+        namespace: platform-system
+        path: /mutate
+        port: 443
+      caBundle: CA_BUNDLE_PLACEHOLDER
+    namespaceSelector:
+      matchLabels:
+        platform.example.com/managed-by: namespace-provisioner
+    rules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE"]
+        resources: ["pods"]
+        scope: Namespaced

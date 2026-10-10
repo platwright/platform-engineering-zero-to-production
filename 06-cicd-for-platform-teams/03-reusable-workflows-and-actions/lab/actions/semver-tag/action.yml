@@ -1,0 +1,32 @@
+name: "Semantic version tag"
+description: "Compute an immutable image tag (ref-shortsha) from the git context."
+
+# A COMPOSITE ACTION: a reusable bundle of STEPS. It runs inside the caller's
+# job, on the caller's runner. It has inputs and outputs but no `runs-on` of its
+# own. Every `run` step must declare a `shell`.
+
+inputs:
+  prefix:
+    description: "Optional prefix, e.g. the image name (payments -> payments:main-a1b2c3d)."
+    required: false
+    default: ""
+
+outputs:
+  tag:
+    description: "The computed immutable tag."
+    value: ${{ steps.compute.outputs.tag }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: compute
+      shell: bash
+      run: |
+        ref="${GITHUB_REF_NAME//\//-}"   # branch/tag with slashes flattened
+        sha="${GITHUB_SHA::7}"           # short commit SHA
+        tag="${ref}-${sha}"
+        if [ -n "${{ inputs.prefix }}" ]; then
+          tag="${{ inputs.prefix }}:${tag}"
+        fi
+        echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+        echo "Computed tag: ${tag}"

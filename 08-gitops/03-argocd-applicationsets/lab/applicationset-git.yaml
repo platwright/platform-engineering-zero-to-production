@@ -1,0 +1,40 @@
+# ApplicationSet with a GIT DIRECTORY generator.
+# One matching directory in the repo -> one generated Application. Onboarding a new
+# app becomes "add a folder". The glob selects the guestbook variants and excludes
+# the jsonnet ones (which need extra config to render) so every child stays clean.
+#
+#   kubectl apply -f applicationset-git.yaml
+#   kubectl -n argocd get applications   # -> guestbook, helm-guestbook, kustomize-guestbook
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: guestbook-variants
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/argoproj/argocd-example-apps
+        revision: HEAD
+        directories:
+          - path: '*guestbook*'
+          - path: 'jsonnet-*'
+            exclude: true
+  template:
+    metadata:
+      # {{path.basename}} is the final path segment, e.g. "kustomize-guestbook".
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps
+        targetRevision: HEAD
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

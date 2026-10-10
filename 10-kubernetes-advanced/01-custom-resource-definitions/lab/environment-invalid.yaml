@@ -1,0 +1,45 @@
+# INVALID Environments — each violates exactly one rule so you can read the error.
+# Apply one at a time; every apply here should be REJECTED by the API server.
+
+# 1. tier is not in the enum {dev, staging, prod}  -> OpenAPI schema rejection.
+---
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: bad-tier
+spec:
+  team: payments
+  tier: production
+
+# 2. team violates the regex (uppercase + underscore)  -> OpenAPI pattern rejection.
+---
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: bad-team
+spec:
+  team: Payments_Team
+  tier: dev
+
+# 3. prod without an owner  -> CEL rule "prod environments must set spec.owner".
+---
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: bad-prod-no-owner
+spec:
+  team: payments
+  tier: prod
+  replicas: 3
+
+# 4. prod with only 1 replica  -> CEL rule "prod ... at least 2 replicas".
+---
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: bad-prod-one-replica
+spec:
+  team: payments
+  tier: prod
+  owner: platform-oncall@example.com
+  replicas: 1

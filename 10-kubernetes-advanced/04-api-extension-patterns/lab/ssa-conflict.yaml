@@ -1,0 +1,13 @@
+# Same Environment, but a DIFFERENT value for costCenter, applied by a DIFFERENT
+# field manager ("team-b"). Because team-a already owns spec.costCenter with a
+# different value, Server-Side Apply reports a CONFLICT until you --force-conflicts.
+#   kubectl apply --server-side --field-manager=team-b -f ssa-conflict.yaml
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: payments-dev
+spec:
+  team: payments
+  tier: dev
+  replicas: 1
+  costCenter: cc-9999

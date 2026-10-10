@@ -1,0 +1,47 @@
+name: reusable-ci
+
+# A REUSABLE WORKFLOW: other workflows call it as a job with `uses:` and the
+# `workflow_call` trigger. It declares typed inputs, an output the caller can
+# read, and optional secrets. In a real platform this lives in a central
+# `platform-workflows` repo and callers pin it by commit SHA.
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: "Image/artifact name to build."
+        required: true
+        type: string
+      dockerfile-path:
+        description: "Path to the Dockerfile."
+        required: false
+        type: string
+        default: "./Dockerfile"
+    outputs:
+      tag:
+        description: "The immutable tag the build produced."
+        value: ${{ jobs.build.outputs.tag }}
+    secrets:
+      registry-token:
+        description: "Token for the artifact registry (optional in this demo)."
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build and tag
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Compute the immutable tag
+        id: tag
+        run: echo "tag=${{ inputs.image-name }}:${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Build (placeholder — real build arrives in Module 06.5)
+        run: echo "Would build ${{ inputs.dockerfile-path }} as ${{ steps.tag.outputs.tag }}"

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-config
+  labels:
+    app: web
+  annotations:
+    # Wave 0: config exists before the workload that reads it (wave 1).
+    argocd.argoproj.io/sync-wave: "0"
+data:
+  APP_GREETING: "hello from the base config"

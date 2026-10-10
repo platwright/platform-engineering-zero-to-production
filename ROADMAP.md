@@ -11,9 +11,10 @@ is developed in the open, so each module is marked with its current status.
 | 🚧 | In progress / scaffolded — outline exists, content being written |
 | 🗓️ | Planned — not yet started |
 
-> **Current state:** Modules **00–05 are complete** — Orientation, Platform
+> **Current state:** Modules **00–10 are complete** — Orientation, Platform
 > Foundations, Containerization, Kubernetes Fundamentals, Project 1 (Container
-> Platform Foundation), and Infrastructure as Code. Phases 06 and beyond are
+> Platform Foundation), Infrastructure as Code, CI/CD, Package Management, GitOps,
+> Project 2 (GitOps Platform), and Kubernetes Advanced. Phases 11 and beyond are
 > scaffolded and in progress. Want to help? See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
@@ -82,31 +83,46 @@ is developed in the open, so each module is marked with its current status.
 
 ### Phase 5 — CI/CD for Platform Teams
 
-- 🚧 **[06 · CI/CD for Platform Teams](./06-cicd-for-platform-teams/)**
-  - CI/CD fundamentals · GitHub Actions deep dive · reusable workflows & actions ·
-    pipeline templates as product · container build pipelines · IaC pipelines
+- ✅ **[06 · CI/CD for Platform Teams](./06-cicd-for-platform-teams/)**
+  - [01 · CI/CD Fundamentals for Platform Teams](./06-cicd-for-platform-teams/01-cicd-fundamentals-for-platform/)
+  - [02 · GitHub Actions Deep Dive](./06-cicd-for-platform-teams/02-github-actions-deep-dive/)
+  - [03 · Reusable Workflows and Composite Actions](./06-cicd-for-platform-teams/03-reusable-workflows-and-actions/)
+  - [04 · Pipeline Templates as a Platform Product](./06-cicd-for-platform-teams/04-pipeline-templates-as-product/)
+  - [05 · Container Build Pipelines](./06-cicd-for-platform-teams/05-container-build-pipelines/)
+  - [06 · IaC Pipelines](./06-cicd-for-platform-teams/06-iac-pipelines/)
 
 ### Phase 6 — Kubernetes Package Management
 
-- 🚧 **[07 · Kubernetes Package Management](./07-kubernetes-package-management/)**
-  - Helm fundamentals · Helm chart development · Kustomize · Helm vs Kustomize ·
-    OCI artifacts & distribution
+- ✅ **[07 · Kubernetes Package Management](./07-kubernetes-package-management/)**
+  - [01 · Helm Fundamentals](./07-kubernetes-package-management/01-helm-fundamentals/)
+  - [02 · Helm Chart Development](./07-kubernetes-package-management/02-helm-chart-development/)
+  - [03 · Kustomize](./07-kubernetes-package-management/03-kustomize/)
+  - [04 · Helm vs Kustomize](./07-kubernetes-package-management/04-helm-vs-kustomize/)
+  - [05 · OCI Artifacts and Distribution](./07-kubernetes-package-management/05-oci-artifacts-and-distribution/)
 
 ### Phase 7 — GitOps
 
-- 🚧 **[08 · GitOps](./08-gitops/)**
-  - GitOps principles · ArgoCD fundamentals · ApplicationSets ·
-    multi-environment GitOps · secrets in GitOps · GitOps maturity model
+- ✅ **[08 · GitOps](./08-gitops/)**
+  - [01 · GitOps Principles](./08-gitops/01-gitops-principles/)
+  - [02 · ArgoCD Fundamentals](./08-gitops/02-argocd-fundamentals/)
+  - [03 · ArgoCD ApplicationSets](./08-gitops/03-argocd-applicationsets/)
+  - [04 · Multi-Environment GitOps](./08-gitops/04-multi-environment-gitops/)
+  - [05 · Secrets in GitOps](./08-gitops/05-secrets-in-gitops/)
+  - [06 · GitOps Maturity Model](./08-gitops/06-gitops-maturity-model/)
 
 ### Project 2
 
-- 🚧 **[09 · Platform Project 02 — GitOps Platform](./09-platform-project-02/)**
+- ✅ **[09 · Platform Project 02 — GitOps Platform](./09-platform-project-02/)**
+  - [Project brief & build guide](./09-platform-project-02/gitops-platform/README.md)
 
 ### Phase 8 — Kubernetes Advanced
 
-- 🚧 **[10 · Kubernetes Advanced](./10-kubernetes-advanced/)**
-  - Custom Resource Definitions · operators · admission webhooks ·
-    API extension patterns · multi-cluster Kubernetes
+- ✅ **[10 · Kubernetes Advanced](./10-kubernetes-advanced/)**
+  - [01 · Custom Resource Definitions](./10-kubernetes-advanced/01-custom-resource-definitions/)
+  - [02 · Kubernetes Operators](./10-kubernetes-advanced/02-kubernetes-operators/)
+  - [03 · Admission Webhooks](./10-kubernetes-advanced/03-admission-webhooks/)
+  - [04 · API Extension Patterns](./10-kubernetes-advanced/04-api-extension-patterns/)
+  - [05 · Multi-Cluster Kubernetes](./10-kubernetes-advanced/05-multi-cluster-kubernetes/)
 
 ### Phase 9 — Observability Engineering
 

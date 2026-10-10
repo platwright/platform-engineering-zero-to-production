@@ -1,0 +1,44 @@
+name: caller
+
+# How a consumer repo uses the shared library. Both the reusable workflow and the
+# composite action are PINNED BY COMMIT SHA (not a moving tag) so a compromised
+# upstream cannot silently change what runs in your pipeline. The trailing
+# `# vX.Y.Z` comment records the human-readable version the SHA maps to; let
+# Dependabot propose SHA bumps so the pins stay fresh.
+#
+# The SHAs below are illustrative placeholders. In your own repo, replace
+# `platform-org/...` with your central registry and pin real commit SHAs.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # Call a whole reusable workflow as a job. Inputs are typed; pass only the
+  # secrets it needs (here, none are required, so no secrets block).
+  ci:
+    uses: platform-org/platform-workflows/.github/workflows/reusable-ci.yml@a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0 # v2.3.1
+    with:
+      image-name: payments
+      dockerfile-path: ./Dockerfile
+
+  # Use a composite action from the central actions registry, pinned by SHA.
+  tag:
+    runs-on: ubuntu-latest
+    needs: ci
+    steps:
+      - name: Check out
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Compute tag with the shared composite action
+        id: version
+        uses: platform-org/platform-actions/semver-tag@b0a9f8e7d6c5b4a3928170f6e5d4c3b2a1f0e9d8 # v1.4.0
+        with:
+          prefix: payments
+      - name: Show the result and the upstream workflow output
+        run: |
+          echo "composite tag  = ${{ steps.version.outputs.tag }}"
+          echo "reusable tag   = ${{ needs.ci.outputs.tag }}"

@@ -1,0 +1,44 @@
+name: oidc-gcp
+
+# Keyless authentication to Google Cloud from GitHub Actions.
+#
+# There is NO stored service-account key anywhere. On each run GitHub mints a
+# short-lived, signed OIDC token describing this workflow (repository, ref,
+# environment). Google Workload Identity Federation verifies the token issuer
+# and claims, then hands back short-lived credentials that expire in minutes.
+#
+# Replace the placeholder project number, pool/provider, and service account
+# below with your own values. Running this for real needs a (free-tier) GCP
+# project with Workload Identity Federation configured — see the lab README for
+# the one-time setup and the cost/accounts note. The file is useful on its own:
+# validate it locally with `actionlint oidc-gcp.yml`.
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  id-token: write # REQUIRED so the runner may request an OIDC token
+  contents: read # least privilege for everything else
+
+jobs:
+  auth:
+    name: keyless auth to GCP (no stored secret)
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud (keyless via OIDC)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/123456789/locations/global/workloadIdentityPools/github/providers/github
+          service_account: github-actions@PROJECT_ID.iam.gserviceaccount.com
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Prove the identity is short-lived and scoped
+        run: gcloud auth list

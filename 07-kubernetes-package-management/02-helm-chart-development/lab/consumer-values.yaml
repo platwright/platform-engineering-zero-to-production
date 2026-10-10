@@ -1,0 +1,19 @@
+# How an application team CONSUMES the golden path: set a handful of values and
+# inherit every hardened default (non-root, read-only rootfs, dropped caps) for free.
+# The team never writes a securityContext — that's the platform's job.
+image:
+  repository: ghcr.io/stefanprodan/podinfo
+  tag: "6.7.0"
+
+# This team prefers a fixed size over autoscaling.
+replicaCount: 3
+autoscaling:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 32Mi
+  limits:
+    cpu: 200m
+    memory: 96Mi

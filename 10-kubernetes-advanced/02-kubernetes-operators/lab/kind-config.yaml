@@ -1,0 +1,7 @@
+# Single-node kind cluster for the operator lab.
+# Create with: kind create cluster --name pe-operator --config kind-config.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: pe-operator
+nodes:
+  - role: control-plane

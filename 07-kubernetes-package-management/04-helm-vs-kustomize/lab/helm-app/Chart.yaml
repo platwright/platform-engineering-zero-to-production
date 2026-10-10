@@ -1,0 +1,6 @@
+apiVersion: v2
+name: helm-app
+description: A deliberately minimal chart deploying the same app three-ways lab uses.
+type: application
+version: 0.1.0
+appVersion: "6.7.1"

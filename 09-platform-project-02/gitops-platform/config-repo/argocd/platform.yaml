@@ -1,0 +1,25 @@
+# Platform Application: syncs cluster-wide platform config (namespaces + quotas).
+# recurse:false keeps it from descending into platform/pass2 (Pass 2 manifests that
+# need Kyverno/ESO CRDs not present in Pass 1).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: __CONFIG_REPO_URL__
+    targetRevision: main
+    path: platform
+    directory:
+      recurse: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

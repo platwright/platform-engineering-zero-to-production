@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# STAGING: pre-production. Runs the PROMOTED image at 2 replicas.
+# Promote by bumping newTag to the tag that was validated in dev.
+namespace: web-staging
+
+resources:
+  - ../../base
+  - namespace.yaml
+
+patches:
+  - path: replicas-patch.yaml
+
+images:
+  - name: nginx
+    newTag: 1.27.0-alpine

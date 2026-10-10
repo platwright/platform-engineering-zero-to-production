@@ -1,0 +1,22 @@
+# STAGING Application — auto-sync. Promotion lands here when a PR bumps the
+# staging overlay's image tag to the dev-validated tag and is merged.
+#
+# Point repoURL at the Git repo where you pushed ./config-repo (see the lab).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: web-staging
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/your-org/pe-gitops-config.git
+    targetRevision: main
+    path: apps/web/overlays/staging
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: web-staging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

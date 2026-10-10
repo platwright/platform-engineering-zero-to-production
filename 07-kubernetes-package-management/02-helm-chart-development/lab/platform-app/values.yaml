@@ -1,0 +1,104 @@
+# platform-app — the platform golden-path workload.
+#
+# Hardened by DEFAULT: non-root, read-only root filesystem, all Linux capabilities
+# dropped, seccomp RuntimeDefault. A team adopts the paved road by overriding a few
+# of these values (image, replicas/HPA, resources) — security is not their job.
+
+# -- nameOverride / fullnameOverride let a consumer rename the generated objects.
+nameOverride: ""
+fullnameOverride: ""
+
+# -- Container image. `repository` is REQUIRED (enforced by values.schema.json).
+# Pin a real tag or, better, an immutable @sha256 digest. Never rely on :latest.
+image:
+  repository: ghcr.io/stefanprodan/podinfo
+  tag: "6.7.1"
+  pullPolicy: IfNotPresent
+
+# -- Secrets used to pull private images, e.g. [{ name: my-regcred }].
+imagePullSecrets: []
+
+# -- Static replica count. IGNORED when autoscaling.enabled is true.
+replicaCount: 2
+
+# -- Extra labels/annotations merged onto the pod template.
+podLabels: {}
+podAnnotations: {}
+
+# -- Service that fronts the pods.
+service:
+  type: ClusterIP
+  port: 80          # port the Service exposes
+  targetPort: 9898  # port the container listens on (podinfo's HTTP port)
+  annotations: {}
+
+# -- Resource requests/limits. Required on the golden path — unbounded pods are
+# how one workload starves a node.
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 500m
+    memory: 128Mi
+
+# -- HorizontalPodAutoscaler. When enabled, the Deployment omits `replicas` so the
+# HPA owns the replica count. (Scaling needs metrics-server in the cluster.)
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+# -- PodDisruptionBudget: protect availability during node drains and rollouts.
+# Set EITHER minAvailable OR maxUnavailable, not both.
+pdb:
+  enabled: true
+  minAvailable: 1
+
+# -- NetworkPolicy: default-deny ingress, then allow same-namespace traffic plus any
+# namespaces named below (matched on the kubernetes.io/metadata.name label).
+networkPolicy:
+  enabled: true
+  allowSameNamespace: true
+  allowNamespaces: []
+
+# -- ServiceAccount for the workload. Token automount is off by default (most apps
+# never call the Kubernetes API; mounting a token is needless attack surface).
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: false
+
+# -- HTTP health probe paths and timing (podinfo exposes /readyz and /healthz).
+probes:
+  readiness:
+    path: /readyz
+  liveness:
+    path: /healthz
+  initialDelaySeconds: 2
+  periodSeconds: 10
+
+# -- Pod-level hardened security context.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  fsGroup: 65532
+  seccompProfile:
+    type: RuntimeDefault
+
+# -- Container-level hardened security context.
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  capabilities:
+    drop:
+      - ALL
+
+# -- Scheduling controls (passed straight through to the pod spec).
+nodeSelector: {}
+tolerations: []
+affinity: {}

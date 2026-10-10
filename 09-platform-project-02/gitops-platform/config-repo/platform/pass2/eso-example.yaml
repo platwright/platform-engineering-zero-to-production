@@ -1,0 +1,31 @@
+# Pass 2 — External Secrets Operator: sync a secret from GCP Secret Manager into a
+# Kubernetes Secret. Git holds only this REFERENCE; the value never touches Git.
+# Requires ESO installed and a SecretStore wired to GCP (Phase 10).
+apiVersion: external-secrets.io/v1beta1
+kind: SecretStore
+metadata:
+  name: gcp-secrets
+  namespace: team-a-prod
+spec:
+  provider:
+    gcpsm:
+      projectID: my-project
+      # Authenticate via Workload Identity (no key files); configured in Phase 10.
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: service-1-secret
+  namespace: team-a-prod
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: gcp-secrets
+    kind: SecretStore
+  target:
+    name: service-1-secret # the Kubernetes Secret ESO will create
+    creationPolicy: Owner
+  data:
+    - secretKey: DATABASE_URL
+      remoteRef:
+        key: projects/my-project/secrets/service-1-db-url/versions/latest

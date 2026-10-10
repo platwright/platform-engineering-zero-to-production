@@ -1,0 +1,15 @@
+# Dev environment overrides for the podinfo chart.
+# Layered on top of the chart's own values.yaml (last-wins merge).
+replicaCount: 1
+
+ui:
+  message: "hello from DEV — installed by Helm"
+  color: "#34577c"
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 64Mi

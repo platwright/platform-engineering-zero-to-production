@@ -1,0 +1,23 @@
+# A VALID Environment. Apply after the CRD:
+#   kubectl apply -f environment-sample.yaml
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: payments-dev
+spec:
+  team: payments
+  tier: dev
+  replicas: 1
+  costCenter: cc-1001
+---
+# A valid prod Environment: owner is set and replicas >= 2, so the CEL rules pass.
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: payments-prod
+spec:
+  team: payments
+  tier: prod
+  owner: platform-oncall@example.com
+  replicas: 3
+  costCenter: cc-1002

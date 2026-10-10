@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# The base is environment-agnostic: no namespace, no env-specific image tag or
+# replica count. Those differences live in the overlays.
+resources:
+  - deployment.yaml
+  - service.yaml

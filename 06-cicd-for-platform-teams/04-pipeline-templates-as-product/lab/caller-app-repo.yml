@@ -1,0 +1,24 @@
+name: ci
+
+# What an APPLICATION team maintains: their entire CI is a few lines that call the
+# platform's golden-path template. App teams typically pin the major tag (@v2) for
+# automatic non-breaking fixes; a platform-grade consumer can pin a commit SHA.
+# Everything the pipeline does is owned by the platform team.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: platform-org/platform-workflows/.github/workflows/app-ci.yml@v2
+    with:
+      image-name: payments
+      language: go
+      # Escape hatch intentionally NOT set -> integration tests run (safe default).
+      # To skip (with platform sign-off), add: skip-integration-tests: true
+    secrets: inherit

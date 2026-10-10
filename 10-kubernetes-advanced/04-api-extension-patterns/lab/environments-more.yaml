@@ -1,0 +1,34 @@
+# A handful of Environments across tiers and teams, to demonstrate server-side
+# field selectors. All satisfy the CEL rules (prod needs owner + >= 2 replicas;
+# dev <= 3 replicas).
+# kubectl apply --server-side --field-manager=team-a -f environments-more.yaml
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: shop-dev
+spec:
+  team: shop
+  tier: dev
+  replicas: 2
+  costCenter: cc-2001
+---
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: shop-prod
+spec:
+  team: shop
+  tier: prod
+  owner: shop-oncall@example.com
+  replicas: 3
+  costCenter: cc-2002
+---
+apiVersion: platform.example.com/v1alpha1
+kind: Environment
+metadata:
+  name: billing-staging
+spec:
+  team: billing
+  tier: staging
+  replicas: 2
+  costCenter: cc-3001

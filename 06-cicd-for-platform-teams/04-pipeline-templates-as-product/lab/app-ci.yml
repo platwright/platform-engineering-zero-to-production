@@ -1,0 +1,74 @@
+name: app-ci
+
+# THE PRODUCT: a golden-path application CI pipeline the platform team owns and
+# versions. Application teams do not write CI from scratch — they call this with a
+# few inputs (see caller-app-repo.yml). Improving a step here upgrades every
+# consumer with a single release. In a real platform this lives in a central
+# `platform-workflows` repo and is published as releases v1, v2, ...
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: "Image name to build (without registry or tag)."
+        required: true
+        type: string
+      dockerfile-path:
+        description: "Path to the Dockerfile."
+        required: false
+        type: string
+        default: "./Dockerfile"
+      language:
+        description: "Toolchain for lint/test: go | node | python."
+        required: false
+        type: string
+        default: "go"
+      skip-integration-tests:
+        # ESCAPE HATCH: off by default, auditable, and reported. Teams may skip
+        # the slow integration suite when they genuinely must — but the override
+        # is visible in their YAML and logged as a warning for the metric.
+        description: "Escape hatch: skip integration tests (requires platform sign-off)."
+        required: false
+        type: boolean
+        default: false
+    outputs:
+      tag:
+        description: "The immutable tag the pipeline produced."
+        value: ${{ jobs.lint-test-build.outputs.tag }}
+
+permissions:
+  contents: read
+
+jobs:
+  lint-test-build:
+    name: lint / test / build (golden path)
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Lint
+        run: echo "lint ${{ inputs.language }} sources"
+
+      - name: Unit tests
+        run: echo "run unit tests"
+
+      - name: Integration tests (safe default — runs unless the hatch is set)
+        if: ${{ !inputs.skip-integration-tests }}
+        run: echo "run integration tests"
+
+      - name: Record escape-hatch usage (feeds the exception metric)
+        if: ${{ inputs.skip-integration-tests }}
+        run: echo "::warning::integration tests skipped via escape hatch for ${{ inputs.image-name }}"
+
+      - name: Compute immutable tag
+        id: tag
+        run: echo "tag=${{ inputs.image-name }}:${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Build (full build/scan/sign arrives in Module 06.5)
+        run: echo "build ${{ inputs.dockerfile-path }} -> ${{ steps.tag.outputs.tag }}"
+
+      - name: Emit adoption telemetry (golden-path usage)
+        run: echo "::notice::app-ci ran for ${{ inputs.image-name }} in ${{ github.repository }}"

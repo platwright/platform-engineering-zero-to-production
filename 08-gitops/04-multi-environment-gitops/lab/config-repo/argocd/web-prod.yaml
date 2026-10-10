@@ -1,0 +1,23 @@
+# PROD Application — MANUAL sync gate. Note there is NO `automated:` block, so a
+# merged change to overlays/prod becomes OutOfSync and waits for an explicit
+# `argocd app sync web-prod` (or a UI approval). This is the production guardrail.
+#
+# Point repoURL at the Git repo where you pushed ./config-repo (see the lab).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: web-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/your-org/pe-gitops-config.git
+    targetRevision: main
+    path: apps/web/overlays/prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: web-prod
+  syncPolicy:
+    # No automated sync: production changes are applied on purpose, by a human.
+    syncOptions:
+      - CreateNamespace=false
