@@ -1,0 +1,46 @@
+# Sloth PrometheusServiceLevel — Build pipeline duration
+#
+# Platform SLO: 95% of build-pipeline runs finish within 10 minutes (600s), over
+# 30 days. This is a LATENCY SLO: "good" = runs faster than the 600s bucket; "bad"
+# = everything slower. Teams are blocked while a build runs, so slow builds are a
+# platform reliability problem, not just an inconvenience.
+#
+# NOTE: GitHub Actions has no native Prometheus endpoint. These metrics come from a
+# CI metrics exporter / pushgateway that records each run's duration into a
+# histogram named `ci_pipeline_duration_seconds`. Confirm the `le="600"` bucket
+# exists in your exporter config.
+#
+# Render with:
+#   docker run --rm -v "${PWD}:/data" ghcr.io/slok/sloth:v0.16.0 \
+#     generate -i /data/build-pipeline-slo.yaml -o /data/build-pipeline-rules.yaml
+version: "prometheus/v1"
+service: build-pipeline
+labels:
+  tier: platform
+  owner: platform-team
+slos:
+  - name: build-pipeline-duration
+    objective: 95.0
+    description: >-
+      95% of build-pipeline runs complete within 10 minutes so teams are not blocked
+      waiting on CI.
+    sli:
+      events:
+        # bad = pipeline runs slower than the 600s bucket boundary
+        error_query: >-
+          sum(rate(ci_pipeline_duration_seconds_count[{{.window}}]))
+          - sum(rate(ci_pipeline_duration_seconds_bucket{le="600"}[{{.window}}]))
+        total_query: sum(rate(ci_pipeline_duration_seconds_count[{{.window}}]))
+    alerting:
+      name: BuildPipelineDuration
+      labels:
+        service: build-pipeline
+      annotations:
+        summary: Build pipeline duration is burning its error budget.
+        runbook: https://runbooks.internal.example.com/build-pipeline
+      page_alert:
+        labels:
+          severity: page
+      ticket_alert:
+        labels:
+          severity: ticket

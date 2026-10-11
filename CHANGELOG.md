@@ -10,9 +10,37 @@ curriculum progress. See the [ROADMAP](./ROADMAP.md) for the full plan and statu
 
 ### Planned
 
-- Project 4 — Internal Developer Platform (module `16`).
-- Phase 13 — Platform SRE (module `17`).
-- Remaining phases and projects per the [ROADMAP](./ROADMAP.md).
+- Phase 15 — Multi-Cluster and Multi-Cloud (module `19`).
+- Phase 16 — Advanced Platform Topics (module `20`).
+- Capstones and reference material per the [ROADMAP](./ROADMAP.md).
+
+## [0.6.0] — 2026-10-11
+
+The developer platform and platform operations: a capstone project plus two phases.
+
+### Added
+
+- **Project 4 — Internal Developer Platform** (complete) — the capstone of the core
+  curriculum: a Backstage-based IDP that assembles Projects 1–3 behind a golden path.
+  Includes the Backstage config and org catalog, **two golden-path templates** (a Go
+  microservice and a Python/FastAPI service) each with a full scaffolder template and a
+  production-ready skeleton (app, hardened Dockerfile, build→scan→sign→push CI, GitOps
+  overlay, catalog-info, TechDocs), the config-repo hand-off to Project 2, three ADRs,
+  a staged build guide, the zero-to-production onboarding journey, a runbook, and
+  bootstrap/cleanup scripts.
+- **Module 17 — Platform SRE** (complete) — 6 submodules + labs: platform SRE
+  fundamentals (higher reliability bar, toil), platform SLOs (Sloth for platform
+  services), incident management (a simulated ArgoCD incident + postmortem), capacity
+  planning (Karpenter, right-sizing), chaos engineering (Chaos Mesh GameDays), and
+  disaster recovery (Velero backup/restore, RTO/RPO).
+- **Module 18 — FinOps and Cost Engineering** (complete) — 5 submodules + labs: cloud
+  cost fundamentals, Kubernetes cost management (OpenCost, the attribution gap), cost
+  attribution and chargeback (Kyverno cost-label enforcement), optimization patterns
+  (right-sizing, spot, consolidation, scale-to-zero), and FinOps culture and process.
+
+### Changed
+
+- `ROADMAP.md` updated: modules `16`–`18` marked complete with per-submodule links.
 
 ## [0.5.0] — 2026-10-11
 
@@ -174,7 +202,8 @@ The foundation release: repository scaffolding plus the first two modules.
   - `05` Platform Team Topology
   - Each with a full lesson and a hands-on lab.
 
-[Unreleased]: ../../compare/v0.5.0...HEAD
+[Unreleased]: ../../compare/v0.6.0...HEAD
+[0.6.0]: ../../releases/tag/v0.6.0
 [0.5.0]: ../../releases/tag/v0.5.0
 [0.4.0]: ../../releases/tag/v0.4.0
 [0.3.0]: ../../releases/tag/v0.3.0

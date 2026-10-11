@@ -1,0 +1,38 @@
+# Sloth PrometheusServiceLevel — Argo CD API availability
+#
+# Platform SLO: 99.9% of Argo CD API server requests succeed, over 30 days.
+# "good" = gRPC requests handled with code OK; "bad" = any non-OK code.
+# Argo CD's API/repo servers expose the standard gRPC server metrics.
+#
+# Render with:
+#   docker run --rm -v "${PWD}:/data" ghcr.io/slok/sloth:v0.16.0 \
+#     generate -i /data/argocd-availability-slo.yaml -o /data/argocd-availability-rules.yaml
+version: "prometheus/v1"
+service: argocd
+labels:
+  tier: platform
+  owner: platform-team
+slos:
+  - name: argocd-api-availability
+    objective: 99.9
+    description: >-
+      Argo CD API server answers requests so teams can view and sync applications.
+    sli:
+      events:
+        error_query: >-
+          sum(rate(grpc_server_handled_total{grpc_service=~"argocd.*",grpc_code!="OK"}[{{.window}}]))
+        total_query: >-
+          sum(rate(grpc_server_handled_total{grpc_service=~"argocd.*"}[{{.window}}]))
+    alerting:
+      name: ArgoCDApiAvailability
+      labels:
+        service: argocd
+      annotations:
+        summary: Argo CD API availability is burning its error budget.
+        runbook: https://runbooks.internal.example.com/argocd-availability
+      page_alert:
+        labels:
+          severity: page
+      ticket_alert:
+        labels:
+          severity: ticket

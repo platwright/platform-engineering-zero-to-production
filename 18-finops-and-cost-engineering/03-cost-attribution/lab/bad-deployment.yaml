@@ -1,0 +1,30 @@
+# Non-compliant workload: NO cost labels on the pod template.
+# Admitted under Audit (only reported), REJECTED once the policy is set to Enforce —
+# this is unattributable spend the guardrail must keep out of the cluster.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: legacy-billing
+  namespace: team-payments
+  labels:
+    app.kubernetes.io/name: legacy-billing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: legacy-billing
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: legacy-billing
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25-alpine
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi

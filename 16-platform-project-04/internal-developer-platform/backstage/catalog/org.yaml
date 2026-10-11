@@ -1,0 +1,89 @@
+# The org software catalog: Systems (logical groupings), Groups (teams), and the
+# Components that make up the platform. This is the "who owns what, where does it run"
+# inventory from Module 15.3. Backstage ingests it via app-config.idp.yaml.
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: platform
+  description: Everything the platform team owns and operates.
+spec:
+  owner: team-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: platform-core
+  description: The core platform capabilities (GitOps, observability, security).
+spec:
+  owner: team-platform
+  domain: platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: team-platform
+  description: The platform engineering team.
+spec:
+  type: team
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: team-a
+  description: A stream-aligned product team (customer of the platform).
+spec:
+  type: team
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: team-b
+  description: A stream-aligned product team (customer of the platform).
+spec:
+  type: team
+  children: []
+---
+# The platform's own capabilities, catalogued as Components (so they have owners,
+# docs, and show up in the portal like any other service).
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: gitops-platform
+  description: ArgoCD-based GitOps delivery (Project 2).
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: service
+  lifecycle: production
+  owner: team-platform
+  system: platform-core
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: observability-platform
+  description: OpenTelemetry + Prometheus/Loki/Tempo/Grafana stack (Project 3).
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: service
+  lifecycle: production
+  owner: team-platform
+  system: platform-core
+---
+# An example stream-team service, so the catalog isn't only platform components.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: service-1
+  description: team-a's first service (deployed via the GitOps platform).
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    argocd/app-name: team-a-service-1-dev
+spec:
+  type: service
+  lifecycle: production
+  owner: team-a
+  system: platform-core

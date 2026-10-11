@@ -1,0 +1,28 @@
+# Chaos Mesh experiment 3 — delete the External Secrets Operator pod
+#
+# STEADY-STATE HYPOTHESIS:
+#   Before: ExternalSecrets are synced; the managed Kubernetes Secrets exist.
+#   Claim : killing the ESO controller pod does NOT lose existing secrets (they live
+#           in the cluster, not in the controller); ESO restarts within ~30s and
+#           catches up on any missed refreshes. Dependents degrade gracefully, not
+#           hard-fail.
+#   Abort : if the controller does not come back, delete this manifest and
+#           investigate the Deployment.
+#
+# `mode: one` kills a single matched pod (the controller). Its Deployment recreates it.
+#
+# Run:    kubectl apply -f exp3-eso-pod-kill.yaml
+# Stop:   kubectl delete -f exp3-eso-pod-kill.yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: eso-pod-kill
+  namespace: chaos-testing
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces:
+      - external-secrets
+    labelSelectors:
+      app.kubernetes.io/name: external-secrets

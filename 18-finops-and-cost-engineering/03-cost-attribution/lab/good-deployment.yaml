@@ -1,0 +1,35 @@
+# Compliant workload: the three cost labels are present ON THE POD TEMPLATE
+# (spec.template.metadata.labels), which is where OpenCost reads them for attribution.
+# Admitted even under Enforce.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-api
+  namespace: team-payments
+  labels:
+    app.kubernetes.io/name: payments-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: payments-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: payments-api
+        platform.example.com/team: payments
+        platform.example.com/environment: production
+        platform.example.com/cost-center: "cc-4812"
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25-alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi

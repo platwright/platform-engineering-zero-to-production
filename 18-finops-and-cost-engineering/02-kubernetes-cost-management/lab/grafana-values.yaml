@@ -1,0 +1,18 @@
+# Grafana Helm values for the OpenCost lab (grafana/grafana chart).
+# Pre-provisions the in-cluster Prometheus (which scrapes OpenCost) as the default
+# datasource, so cost metrics are chartable the moment Grafana starts. No admin
+# password is set here on purpose — the chart generates one and you read it from the
+# grafana Secret (never hard-code credentials, not even in a lab).
+persistence:
+  enabled: false
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus-server.prometheus-system.svc
+        isDefault: true
+        editable: true

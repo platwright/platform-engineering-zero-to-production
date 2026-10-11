@@ -1,0 +1,84 @@
+# A Backstage golden-path template: scaffold a production-ready Go microservice.
+# The developer fills the parameters form; the steps render the skeleton, publish a
+# GitHub repo, and register the service in the catalog. (Module 15.4 covers the model.)
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: go-microservice
+  title: Go Microservice
+  description: >-
+    A production-ready Go (net/http) service — hardened container, CI
+    (build/scan/sign/push), a Helm chart, a GitOps overlay, observability, and docs.
+  tags:
+    - recommended
+    - go
+    - golden-path
+spec:
+  owner: team-platform
+  type: service
+  parameters:
+    - title: Service information
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Service name
+          type: string
+          description: Unique, lowercase, DNS-friendly (e.g. "checkout").
+          pattern: "^[a-z][a-z0-9-]{1,40}$"
+          ui:autofocus: true
+        description:
+          title: Description
+          type: string
+        owner:
+          title: Owning team
+          type: string
+          description: The team that owns this service.
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: Group
+    - title: Repository
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+  steps:
+    - id: fetch
+      name: Render the skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          repoUrl: ${{ parameters.repoUrl }}
+    - id: publish
+      name: Create the GitHub repository
+      action: publish:github
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        description: ${{ parameters.description }}
+        defaultBranch: main
+        repoVisibility: private
+    - id: register
+      name: Register in the catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+  output:
+    links:
+      - title: Open the repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in the catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

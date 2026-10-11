@@ -1,0 +1,41 @@
+# Require cost-allocation labels.
+# Every Deployment and StatefulSet must carry team, environment, and cost-center labels
+# ON THE POD TEMPLATE, because OpenCost attributes cost by *pod* labels. This is the
+# FinOps twin of the security baseline in Module 13.3: attribution made structural.
+# Ships in Audit so you can measure the gap first; the lab promotes it to Enforce.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-cost-labels
+  annotations:
+    policies.kyverno.io/title: Require Cost Allocation Labels
+    policies.kyverno.io/category: FinOps
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      Requires platform.example.com/team, /environment, and /cost-center labels on the
+      pod template of every Deployment and StatefulSet so cost can be attributed to an
+      owner. Promote from Audit to Enforce after backfilling existing workloads.
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: check-cost-labels
+      match:
+        any:
+          - resources:
+              kinds:
+                - Deployment
+                - StatefulSet
+      validate:
+        message: >-
+          Cost labels are required on the pod template:
+          platform.example.com/team, platform.example.com/environment,
+          and platform.example.com/cost-center.
+        pattern:
+          spec:
+            template:
+              metadata:
+                labels:
+                  platform.example.com/team: "?*"
+                  platform.example.com/environment: "?*"
+                  platform.example.com/cost-center: "?*"

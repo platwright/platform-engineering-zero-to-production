@@ -1,0 +1,27 @@
+# Chaos Mesh experiment 1 — kill a third of Argo CD pods
+#
+# STEADY-STATE HYPOTHESIS:
+#   Before: all Argo CD Applications are Synced/Healthy and the API answers.
+#   Claim : app-sync success stays >= 99% and the API stays responsive WHILE a third
+#           of Argo CD's pods are killed (the remaining replicas absorb the load).
+#   Abort : if real app syncs start failing and do not recover, delete this manifest.
+#
+# Chaos Mesh pod-kill deletes matched pods once; their controllers recreate them.
+# `mode: fixed-percent` with `value: "33"` targets roughly a third of the matches.
+#
+# Run:    kubectl apply -f exp1-argocd-pod-kill.yaml
+# Stop:   kubectl delete -f exp1-argocd-pod-kill.yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: argocd-pod-kill
+  namespace: chaos-testing
+spec:
+  action: pod-kill
+  mode: fixed-percent
+  value: "33"
+  selector:
+    namespaces:
+      - argocd
+    labelSelectors:
+      app.kubernetes.io/part-of: argocd

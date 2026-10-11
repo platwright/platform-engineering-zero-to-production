@@ -1,0 +1,32 @@
+# OpenCost Helm values for a local kind cluster (opencost/opencost chart).
+# Points OpenCost at the in-cluster Prometheus installed by prometheus-values.yaml and
+# keeps the footprint tiny. There is no cloud bill on kind, so OpenCost falls back to
+# its built-in default price list and reports *estimated* costs — perfect for learning
+# the model without spending anything.
+opencost:
+  prometheus:
+    internal:
+      enabled: true
+      serviceName: prometheus-server
+      namespaceName: prometheus-system
+      port: 80
+  exporter:
+    # Scrape/compute loop interval. Lower = fresher numbers on a short-lived lab.
+    extraEnv:
+      EMIT_POD_ANNOTATIONS_METRIC: "true"
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+  ui:
+    enabled: true
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi

@@ -1,0 +1,37 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "team-batch": {
+        "name": "team-batch",
+        "totalCost": 311.08,
+        "cpuCost": 240.5,
+        "ramCost": 70.58,
+        "cpuCoreRequestAverage": 2.0,
+        "cpuCoreUsageAverage": 0.03
+      },
+      "team-web": {
+        "name": "team-web",
+        "totalCost": 142.37,
+        "cpuCost": 90.1,
+        "ramCost": 52.27,
+        "cpuCoreRequestAverage": 0.55,
+        "cpuCoreUsageAverage": 0.38
+      },
+      "__idle__": {
+        "name": "__idle__",
+        "totalCost": 180.0,
+        "cpuCost": 120.0,
+        "ramCost": 60.0
+      },
+      "team-cache": {
+        "name": "team-cache",
+        "totalCost": 23.44,
+        "cpuCost": 12.2,
+        "ramCost": 11.24,
+        "cpuCoreRequestAverage": 0.1,
+        "cpuCoreUsageAverage": 0.05
+      }
+    }
+  ]
+}

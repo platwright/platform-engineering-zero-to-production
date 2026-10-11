@@ -1,0 +1,12 @@
+# The GitOps overlay the scaffolder adds to the Project 2 config repo under
+# apps/<team>/<service>/overlays/dev. ArgoCD's ApplicationSet generates an Application
+# for it and deploys it (dev auto-syncs). The hardened base mirrors Project 2's shape.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: ${{ values.owner }}-dev
+resources:
+  - deployment.yaml
+images:
+  - name: app
+    newName: ghcr.io/your-org/${{ values.name }}
+    newTag: latest # CI replaces this with the signed image digest on each release

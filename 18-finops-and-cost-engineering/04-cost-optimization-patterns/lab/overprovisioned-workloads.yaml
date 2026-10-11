@@ -1,0 +1,156 @@
+# Five deliberately over-provisioned workloads for the right-sizing lab.
+# Each requests 500m CPU / 512Mi but runs idle nginx — the classic "request a lot to be
+# safe" padding. Total requested CPU = 5 × 500m = 2500m. The vpa.yaml objects watch
+# these and recommend a much smaller request; right-sized-workloads.yaml applies it.
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-a
+  labels:
+    team: team-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflated-1
+  namespace: team-a
+  labels:
+    app.kubernetes.io/name: inflated-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inflated-1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: inflated-1
+        platform.example.com/team: team-a
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25-alpine
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflated-2
+  namespace: team-a
+  labels:
+    app.kubernetes.io/name: inflated-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inflated-2
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: inflated-2
+        platform.example.com/team: team-a
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25-alpine
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflated-3
+  namespace: team-a
+  labels:
+    app.kubernetes.io/name: inflated-3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inflated-3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: inflated-3
+        platform.example.com/team: team-a
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25-alpine
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflated-4
+  namespace: team-a
+  labels:
+    app.kubernetes.io/name: inflated-4
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inflated-4
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: inflated-4
+        platform.example.com/team: team-a
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25-alpine
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflated-5
+  namespace: team-a
+  labels:
+    app.kubernetes.io/name: inflated-5
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inflated-5
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: inflated-5
+        platform.example.com/team: team-a
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25-alpine
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi

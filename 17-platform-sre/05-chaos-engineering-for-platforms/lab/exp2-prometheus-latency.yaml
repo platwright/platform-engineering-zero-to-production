@@ -1,0 +1,33 @@
+# Chaos Mesh experiment 2 — inject 500ms latency to Prometheus
+#
+# STEADY-STATE HYPOTHESIS:
+#   Before: Grafana dashboards load and alert rules evaluate normally.
+#   Claim : with +500ms network latency on Prometheus, dashboards DEGRADE GRACEFULLY
+#           (slower, maybe query-timeout warnings) rather than going totally blank,
+#           and alert evaluation still fires — a slow monitoring stack is not a blind
+#           one.
+#   Abort : if alerting stops entirely, delete this manifest.
+#
+# NetworkChaos `delay` adds latency to traffic for the selected pods. `duration`
+# gives it a built-in kill switch.
+#
+# Run:    kubectl apply -f exp2-prometheus-latency.yaml
+# Stop:   kubectl delete -f exp2-prometheus-latency.yaml   (or wait for duration)
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: prometheus-latency
+  namespace: chaos-testing
+spec:
+  action: delay
+  mode: all
+  selector:
+    namespaces:
+      - monitoring
+    labelSelectors:
+      app.kubernetes.io/name: prometheus
+  delay:
+    latency: "500ms"
+    correlation: "0"
+    jitter: "0ms"
+  duration: "5m"

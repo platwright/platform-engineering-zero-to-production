@@ -1,0 +1,43 @@
+# Sloth PrometheusServiceLevel — GitOps sync latency
+#
+# Platform SLO: 95% of Argo CD app reconciliations complete within 60 seconds,
+# measured over 30 days. This is a LATENCY SLO: "good" events are syncs faster than
+# the 60s histogram bucket; "bad" events are everything slower.
+#
+# NOTE: the `le="60"` boundary must be a real bucket in your Argo CD build. Confirm
+# with:  argocd_app_reconcile_bucket  (check the exposed `le` values and adjust).
+#
+# Render with:
+#   docker run --rm -v "${PWD}:/data" ghcr.io/slok/sloth:v0.16.0 \
+#     generate -i /data/gitops-sync-latency-slo.yaml -o /data/gitops-sync-latency-rules.yaml
+version: "prometheus/v1"
+service: gitops
+labels:
+  tier: platform
+  owner: platform-team
+slos:
+  - name: gitops-sync-latency
+    objective: 95.0
+    description: >-
+      95% of GitOps reconciliations complete within 60s so teams' deploys land
+      promptly.
+    sli:
+      events:
+        # bad = reconciliations slower than the 60s bucket boundary
+        error_query: >-
+          sum(rate(argocd_app_reconcile_count[{{.window}}]))
+          - sum(rate(argocd_app_reconcile_bucket{le="60"}[{{.window}}]))
+        total_query: sum(rate(argocd_app_reconcile_count[{{.window}}]))
+    alerting:
+      name: GitOpsSyncLatency
+      labels:
+        service: gitops
+      annotations:
+        summary: GitOps sync latency is burning its error budget.
+        runbook: https://runbooks.internal.example.com/gitops-sync-latency
+      page_alert:
+        labels:
+          severity: page
+      ticket_alert:
+        labels:
+          severity: ticket

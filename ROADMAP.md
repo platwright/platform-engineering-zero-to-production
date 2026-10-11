@@ -11,10 +11,10 @@ is developed in the open, so each module is marked with its current status.
 | 🚧 | In progress / scaffolded — outline exists, content being written |
 | 🗓️ | Planned — not yet started |
 
-> **Current state:** Modules **00–15 are complete** — Orientation through Security and
-> Policy Engineering, plus Kubernetes Networking and Developer Experience & IDP.
-> Project 4 (module 16) and phases 17 and beyond are scaffolded and in progress. Want
-> to help? See [CONTRIBUTING.md](./CONTRIBUTING.md).
+> **Current state:** Modules **00–18 are complete** — Orientation through Developer
+> Experience & IDP, plus Project 4 (the Internal Developer Platform), Platform SRE,
+> and FinOps and Cost Engineering. Phases 19 and beyond are scaffolded and in
+> progress. Want to help? See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
@@ -176,19 +176,27 @@ is developed in the open, so each module is marked with its current status.
 
 ### Project 4
 
-- 🚧 **[16 · Platform Project 04 — Internal Developer Platform](./16-platform-project-04/)**
+- ✅ **[16 · Platform Project 04 — Internal Developer Platform](./16-platform-project-04/)**
+  - [Project brief & build guide](./16-platform-project-04/internal-developer-platform/README.md)
 
 ### Phase 13 — Platform SRE
 
-- 🚧 **[17 · Platform SRE](./17-platform-sre/)**
-  - Platform SRE fundamentals · platform SLOs · incident management ·
-    capacity planning · chaos engineering · disaster recovery
+- ✅ **[17 · Platform SRE](./17-platform-sre/)**
+  - [01 · Platform SRE Fundamentals](./17-platform-sre/01-platform-sre-fundamentals/)
+  - [02 · Platform SLOs](./17-platform-sre/02-platform-slos/)
+  - [03 · Platform Incident Management](./17-platform-sre/03-platform-incident-management/)
+  - [04 · Platform Capacity Planning](./17-platform-sre/04-platform-capacity-planning/)
+  - [05 · Chaos Engineering for Platforms](./17-platform-sre/05-chaos-engineering-for-platforms/)
+  - [06 · Disaster Recovery for Platform](./17-platform-sre/06-disaster-recovery-for-platform/)
 
 ### Phase 14 — FinOps and Cost Engineering
 
-- 🚧 **[18 · FinOps and Cost Engineering](./18-finops-and-cost-engineering/)**
-  - Cloud cost fundamentals · Kubernetes cost management · cost attribution ·
-    optimization patterns · FinOps culture & process
+- ✅ **[18 · FinOps and Cost Engineering](./18-finops-and-cost-engineering/)**
+  - [01 · Cloud Cost Fundamentals](./18-finops-and-cost-engineering/01-cloud-cost-fundamentals/)
+  - [02 · Kubernetes Cost Management](./18-finops-and-cost-engineering/02-kubernetes-cost-management/)
+  - [03 · Cost Attribution and Chargeback](./18-finops-and-cost-engineering/03-cost-attribution/)
+  - [04 · Cost Optimization Patterns](./18-finops-and-cost-engineering/04-cost-optimization-patterns/)
+  - [05 · FinOps Culture and Process](./18-finops-and-cost-engineering/05-finops-culture-and-process/)
 
 ### Phase 15 — Multi-Cluster and Multi-Cloud
 

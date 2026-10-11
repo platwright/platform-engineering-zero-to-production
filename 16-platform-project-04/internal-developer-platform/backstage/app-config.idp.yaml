@@ -1,0 +1,60 @@
+# Backstage app-config for the IDP (Pass 2 integration layer).
+# Merge this into your Backstage app's app-config.yaml (from `npx @backstage/create-app`).
+# It registers the course catalog + golden-path templates, enables TechDocs, GitHub
+# integration, and GitHub auth. Secrets come from the environment — never commit them.
+app:
+  title: Platform IDP
+  baseUrl: http://localhost:3000
+
+backend:
+  baseUrl: http://localhost:7007
+  cors:
+    origin: http://localhost:3000
+
+integrations:
+  github:
+    - host: github.com
+      # A GitHub token with repo + org read (for discovery). From the environment.
+      token: ${GITHUB_TOKEN}
+
+auth:
+  environment: development
+  providers:
+    github:
+      development:
+        clientId: ${AUTH_GITHUB_CLIENT_ID}
+        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+
+techdocs:
+  builder: local # 'external' in production: build in CI, serve from object storage
+  generator:
+    runIn: local
+  publisher:
+    type: local # 'googleGcs' / 'awsS3' in production
+
+catalog:
+  # Allow these entity kinds to be imported from the course catalog + templates.
+  rules:
+    - allow: [Component, API, System, Domain, Resource, Group, User, Template, Location]
+  locations:
+    # The org catalog shipped with this project (systems, groups, components).
+    - type: file
+      target: ../../catalog/org.yaml
+    # The two golden-path templates.
+    - type: file
+      target: ../../../golden-paths/go-microservice/template.yaml
+      rules:
+        - allow: [Template]
+    - type: file
+      target: ../../../golden-paths/python-fastapi/template.yaml
+      rules:
+        - allow: [Template]
+  # Pass 2: auto-discover every repo in the org that has a catalog-info.yaml.
+  providers:
+    github:
+      courseOrg:
+        organization: your-org
+        catalogPath: /catalog-info.yaml
+        schedule:
+          frequency: { minutes: 30 }
+          timeout: { minutes: 3 }

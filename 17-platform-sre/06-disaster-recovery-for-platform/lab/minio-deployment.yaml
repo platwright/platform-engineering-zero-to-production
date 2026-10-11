@@ -1,0 +1,95 @@
+# Local MinIO backend for Velero (free, in-cluster S3-compatible object storage)
+#
+# Deploys MinIO in the `velero` namespace and creates a `velero` bucket, so Velero
+# can back up to it without any cloud account. Data is in an emptyDir — fine for a
+# lab, NOT for production. Apply with:  kubectl apply -f minio-deployment.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: velero
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: velero
+  name: minio
+  labels:
+    component: minio
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: minio
+  template:
+    metadata:
+      labels:
+        component: minio
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:RELEASE.2024-09-22T00-33-43Z
+          args:
+            - server
+            - /storage
+            - --console-address
+            - ":9001"
+          env:
+            - name: MINIO_ROOT_USER
+              value: "minio"
+            - name: MINIO_ROOT_PASSWORD
+              value: "minio123"
+          ports:
+            - containerPort: 9000
+            - containerPort: 9001
+          volumeMounts:
+            - name: storage
+              mountPath: /storage
+      volumes:
+        - name: storage
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: velero
+  name: minio
+  labels:
+    component: minio
+spec:
+  ports:
+    - name: api
+      port: 9000
+      targetPort: 9000
+    - name: console
+      port: 9001
+      targetPort: 9001
+  selector:
+    component: minio
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: velero
+  name: minio-setup
+  labels:
+    component: minio
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      name: minio-setup
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: mc
+          image: minio/mc:RELEASE.2024-09-16T17-43-14Z
+          command:
+            - /bin/sh
+            - -c
+            - >-
+              until mc alias set velero http://minio:9000 minio minio123;
+              do echo waiting for minio; sleep 2; done &&
+              mc mb -p velero/velero &&
+              echo "bucket 'velero' ready"

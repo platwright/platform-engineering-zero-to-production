@@ -1,0 +1,58 @@
+# The hardened, observable Deployment for the scaffolded service. Non-root, read-only
+# root filesystem, dropped capabilities (Project 1 defaults), with OTel export wired to
+# the platform collector (Project 3) and probes hitting /healthz.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${{ values.name }}
+  labels:
+    app: ${{ values.name }}
+    platform.example.com/team: ${{ values.owner }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${{ values.name }}
+  template:
+    metadata:
+      labels:
+        app: ${{ values.name }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: app
+          image: app # replaced by the kustomization image transform
+          ports:
+            - containerPort: 8080
+          env:
+            # Observability wired in by default (Project 3).
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-agent.observability.svc:4317
+            - name: OTEL_SERVICE_NAME
+              value: ${{ values.name }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5

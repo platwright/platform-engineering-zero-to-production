@@ -1,0 +1,16 @@
+# Self-registration: the scaffolder registers this file so the new service appears in
+# the software catalog immediately, owned by the team the developer chose.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}
+  description: ${{ values.description }}
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: your-org/${{ values.name }}
+    argocd/app-name: ${{ values.name }}-dev
+spec:
+  type: service
+  lifecycle: production
+  owner: ${{ values.owner }}
+  system: platform-core

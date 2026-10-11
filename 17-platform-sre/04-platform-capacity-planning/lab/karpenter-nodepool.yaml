@@ -1,0 +1,81 @@
+# Karpenter NodePool starter — spot preference + consolidation
+#
+# Karpenter is a just-in-time node autoscaler: you describe CONSTRAINTS here, and it
+# launches the cheapest node that fits the pending pods, prefers spot, and
+# consolidates underutilized nodes. This manifest is the AWS reference implementation
+# (the most mature Karpenter provider). A GCP/GKE provider exists in preview; the
+# shape of the NodePool is the same, only the NodeClass differs.
+#
+# PREREQUISITES (cloud): an EKS cluster with Karpenter installed, an IAM node role,
+# and subnet/security-group discovery tags. See the lab's optional cloud extension.
+# This file is primarily for READING and validation in the core (local) lab.
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: default
+spec:
+  template:
+    metadata:
+      labels:
+        pool: general-purpose
+    spec:
+      requirements:
+        # --- SPOT PREFERENCE ---
+        # Allowing both capacity types lets Karpenter choose cheap spot first and
+        # fall back to on-demand when spot is unavailable.
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        # Right-sizing happens across a RANGE of instance types: give Karpenter room
+        # to pick the cheapest shape that fits the pending pods.
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["c", "m", "r"]
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["4"]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default
+      # Recycle nodes so they stay patched (AMI drift / security).
+      expireAfter: 720h   # 30 days
+  # --- CONSOLIDATION ---
+  # Continuously drive the cluster toward minimum cost: remove empty nodes and
+  # replace underutilized ones with cheaper/smaller nodes.
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 1m
+    budgets:
+      # Never disrupt more than 10% of nodes at once (protects availability).
+      - nodes: "10%"
+  # Upper bound so a runaway workload cannot provision unlimited nodes.
+  limits:
+    cpu: "1000"
+    memory: 1000Gi
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  amiFamily: AL2023
+  # IAM role Karpenter attaches to the nodes it launches (replace with your role).
+  role: "KarpenterNodeRole-platform"
+  # Karpenter discovers subnets and security groups by tag — tag them with the
+  # cluster name on your VPC resources.
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "platform"
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "platform"
+  amiSelectorTerms:
+    - alias: al2023@latest

@@ -1,0 +1,71 @@
+# VerticalPodAutoscaler objects for the five over-provisioned workloads.
+# updateMode "Off" = recommend only; VPA never mutates the pods, so you review the
+# numbers and apply them deliberately (via right-sized-workloads.yaml). Read a
+# recommendation with:
+#   kubectl -n team-a get vpa inflated-1 \
+#     -o jsonpath='{.status.recommendation.containerRecommendations[0].target}'
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: inflated-1
+  namespace: team-a
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: inflated-1
+  updatePolicy:
+    updateMode: "Off"
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: inflated-2
+  namespace: team-a
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: inflated-2
+  updatePolicy:
+    updateMode: "Off"
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: inflated-3
+  namespace: team-a
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: inflated-3
+  updatePolicy:
+    updateMode: "Off"
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: inflated-4
+  namespace: team-a
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: inflated-4
+  updatePolicy:
+    updateMode: "Off"
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: inflated-5
+  namespace: team-a
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: inflated-5
+  updatePolicy:
+    updateMode: "Off"

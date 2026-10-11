@@ -1,0 +1,42 @@
+# Cost anomaly alerting rules — as values for the prometheus-community/prometheus chart
+# (the stack installed in the Module 18.2 lab). Load them with:
+#
+#   helm upgrade prometheus prometheus-community/prometheus -n prometheus-system \
+#     -f cost-anomaly-alert.yaml --reuse-values
+#
+# These rules run over the cost metrics OpenCost exports to Prometheus.
+# NOTE: on a Prometheus Operator setup you would express the identical `groups` block as
+# a PrometheusRule custom resource instead; the expressions are the same.
+serverFiles:
+  alerting_rules.yml:
+    groups:
+      - name: cost-anomalies
+        rules:
+          # The realistic anomaly: this week's cost rate is >20% above the same moment
+          # last week. Needs ~7 days of history, so it will not fire on a fresh cluster —
+          # it is the production pattern to read and keep.
+          - alert: ClusterCostSpikeWoW
+            expr: sum(node_total_hourly_cost) > 1.2 * sum(node_total_hourly_cost offset 7d)
+            for: 30m
+            labels:
+              severity: warning
+              signal: cost
+            annotations:
+              summary: "Cluster cost up >20% week-over-week"
+              description: >-
+                Current hourly node cost is more than 1.2x the value 7 days ago.
+                Investigate recent deploys, scale-ups, or new workloads, and route to
+                the owning team.
+          # A simple threshold alert that CAN fire in the lab, so you can see the
+          # pipeline work end to end. Tune or remove the threshold for real clusters.
+          - alert: ClusterHourlyCostHigh
+            expr: sum(node_total_hourly_cost) > 0.5
+            for: 10m
+            labels:
+              severity: info
+              signal: cost
+            annotations:
+              summary: "Cluster hourly cost above the demo threshold"
+              description: >-
+                Total node cost rate exceeded $0.50/hour. In production this would be a
+                per-namespace budget tied to the owning team.
