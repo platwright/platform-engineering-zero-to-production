@@ -1,0 +1,65 @@
+# app-config.plugins.yaml
+# Plugin configuration snippets for the Module 15.5 lab. Merge the relevant blocks
+# into your Backstage app-config.yaml. All secrets come from environment variables —
+# never commit real tokens. Entities are bound to plugins via annotations on their
+# catalog-info.yaml (see the lab).
+
+# --- Kubernetes plugin -------------------------------------------------------------
+# Shows deployments, pods, and events for an entity. Binds via the annotation
+# backstage.io/kubernetes-id on the component.
+kubernetes:
+  serviceLocatorMethod:
+    type: multiTenant
+  clusterLocatorMethods:
+    - type: config
+      clusters:
+        - name: dev
+          url: ${KUBE_API_URL}
+          authProvider: serviceAccount
+          serviceAccountToken: ${KUBE_SA_TOKEN}
+          skipTLSVerify: false
+
+# --- Proxy for ArgoCD and Grafana --------------------------------------------------
+# The Roadie ArgoCD and Grafana plugins call their backends through the Backstage proxy
+# so credentials stay server-side.
+proxy:
+  endpoints:
+    "/argocd/api":
+      target: ${ARGOCD_BASE_URL}/api/v1/
+      changeOrigin: true
+      headers:
+        Authorization: Bearer ${ARGOCD_AUTH_TOKEN}
+    "/grafana/api":
+      target: ${GRAFANA_BASE_URL}
+      headers:
+        Authorization: Bearer ${GRAFANA_TOKEN}
+
+# --- ArgoCD plugin -----------------------------------------------------------------
+# Binds via the annotation argocd/app-name on the component.
+argocd:
+  appLocatorMethods:
+    - type: config
+      instances:
+        - name: argoInstance1
+          url: ${ARGOCD_BASE_URL}
+
+# --- Grafana plugin ----------------------------------------------------------------
+# Binds via the annotation grafana/dashboard-selector on the component.
+grafana:
+  domain: ${GRAFANA_BASE_URL}
+  unifiedAlerting: true
+
+# --- Cost Insights plugin ----------------------------------------------------------
+# The frontend renders cost trends; supply a backend data source (OpenCost/Kubecost or
+# cloud billing). This block configures the example/currencies; see the plugin README
+# for wiring a real data provider.
+costInsights:
+  engineerCost: 200000
+  products:
+    computeEngine:
+      name: Compute
+      icon: compute
+  metrics:
+    dailyCost:
+      name: Daily Cost
+      default: true

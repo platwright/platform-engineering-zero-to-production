@@ -10,9 +10,33 @@ curriculum progress. See the [ROADMAP](./ROADMAP.md) for the full plan and statu
 
 ### Planned
 
-- Phase 11 — Kubernetes Networking (module `14`).
-- Phase 12 — Developer Experience and IDP (module `15`).
+- Project 4 — Internal Developer Platform (module `16`).
+- Phase 13 — Platform SRE (module `17`).
 - Remaining phases and projects per the [ROADMAP](./ROADMAP.md).
+
+## [0.5.0] — 2026-10-11
+
+Networking and the developer platform: two full phases.
+
+### Added
+
+- **Module 14 — Kubernetes Networking** (complete) — 6 submodules + labs: networking
+  fundamentals (the flat pod network, Services, DNS, kube-proxy), CNI plugins,
+  network policies (default-deny with selective allows), Cilium & eBPF (Hubble + L7
+  policy), the Gateway API (role-separated ingress + weighted canary), and a service
+  mesh reference (Istio vs Cilium, when not to adopt one). Runnable local labs with
+  default-deny policies, a Cilium L7 policy, a Gateway + canary HTTPRoute, and a
+  service-mesh decision memo.
+- **Module 15 — Developer Experience and IDP** (complete) — 8 submodules + labs: IDP
+  architecture (the five planes realized), Backstage fundamentals, software catalog,
+  software templates, plugins, golden paths, platform CLI tools, and developer portal
+  documentation. Includes a Backstage scaffolder template with a Go service skeleton,
+  a compiling Go + Cobra `platform` CLI, catalog entities, plugin config, and an
+  MkDocs/TechDocs starter.
+
+### Changed
+
+- `ROADMAP.md` updated: modules `14`–`15` marked complete with per-submodule links.
 
 ## [0.4.0] — 2026-10-11
 
@@ -150,7 +174,8 @@ The foundation release: repository scaffolding plus the first two modules.
   - `05` Platform Team Topology
   - Each with a full lesson and a hands-on lab.
 
-[Unreleased]: ../../compare/v0.4.0...HEAD
+[Unreleased]: ../../compare/v0.5.0...HEAD
+[0.5.0]: ../../releases/tag/v0.5.0
 [0.4.0]: ../../releases/tag/v0.4.0
 [0.3.0]: ../../releases/tag/v0.3.0
 [0.2.0]: ../../releases/tag/v0.2.0

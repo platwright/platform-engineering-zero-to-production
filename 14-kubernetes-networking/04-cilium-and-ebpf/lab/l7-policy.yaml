@@ -1,0 +1,24 @@
+# A Cilium L7 policy: allow frontend -> backend, but only HTTP GET on "/".
+# A POST/DELETE, or any other path, is dropped at L7 — something vanilla
+# NetworkPolicy cannot express. Hubble will show the HTTP method and the verdict.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-get-only
+  namespace: team-a
+spec:
+  endpointSelector:
+    matchLabels:
+      app: backend
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: frontend
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+          rules:
+            http:
+              - method: "GET"
+                path: "/"

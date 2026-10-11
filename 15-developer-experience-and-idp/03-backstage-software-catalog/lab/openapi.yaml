@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: Checkout API
+  description: REST API for creating and completing checkouts
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+paths:
+  /checkouts:
+    post:
+      summary: Create a checkout
+      operationId: createCheckout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckoutRequest"
+      responses:
+        "201":
+          description: Checkout created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Checkout"
+  /checkouts/{id}/complete:
+    post:
+      summary: Complete a checkout
+      operationId: completeCheckout
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Checkout completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Checkout"
+        "404":
+          description: Checkout not found
+components:
+  schemas:
+    CheckoutRequest:
+      type: object
+      required:
+        - cartId
+        - currency
+      properties:
+        cartId:
+          type: string
+        currency:
+          type: string
+          example: USD
+    Checkout:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+            - pending
+            - completed
+            - failed
+        amount:
+          type: integer
+          description: Total amount in minor units (e.g. cents)

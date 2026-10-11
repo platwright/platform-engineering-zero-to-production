@@ -1,0 +1,59 @@
+# backstage-values.yaml
+# Minimal, commented values for the community Backstage Helm chart
+# (https://github.com/backstage/charts). OPTIONAL — only used by the cloud step of the
+# Module 15.2 lab. Replace the image with your own built Backstage image.
+#
+# Install:
+#   helm repo add backstage https://backstage.github.io/charts
+#   helm upgrade --install backstage backstage/backstage \
+#     -f backstage-values.yaml -n platform-system --create-namespace
+
+backstage:
+  # Build and push your own image from the scaffolded app, then set it here.
+  image:
+    registry: ghcr.io
+    repository: your-org/backstage
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  # Non-secret config can be inlined; secrets come from environment variables.
+  appConfig:
+    app:
+      baseUrl: http://localhost:3000
+    backend:
+      baseUrl: http://localhost:7007
+      cors:
+        origin: http://localhost:3000
+
+  # Source secrets from a Kubernetes Secret (ideally created by External Secrets).
+  extraEnvVarsSecrets:
+    - backstage-secrets
+
+# Use the chart's bundled PostgreSQL for a quick start. In real production, point at a
+# managed database (e.g. Cloud SQL) and set postgresql.enabled=false.
+postgresql:
+  enabled: true
+  auth:
+    username: backstage
+    database: backstage
+    # Provide the password via an existing secret, not in plaintext here:
+    existingSecret: backstage-postgres
+
+service:
+  type: ClusterIP
+  ports:
+    backend: 7007
+
+# Expose via Ingress/Gateway in production; disabled here for a local-first lab.
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+replicas: 1

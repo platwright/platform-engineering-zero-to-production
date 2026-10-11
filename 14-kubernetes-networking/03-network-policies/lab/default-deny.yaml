@@ -1,0 +1,13 @@
+# Default-deny for the whole namespace: every pod, both directions, nothing allowed.
+# This flips team-a from open-by-default to deny-by-default. DNS and app traffic must
+# then be explicitly allowed (see the other files in this lab).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: team-a
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress

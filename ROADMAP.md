@@ -11,10 +11,10 @@ is developed in the open, so each module is marked with its current status.
 | 🚧 | In progress / scaffolded — outline exists, content being written |
 | 🗓️ | Planned — not yet started |
 
-> **Current state:** Modules **00–13 are complete** — Orientation through Kubernetes
-> Advanced, plus Observability Engineering, Project 3 (Observability Platform), and
-> Security and Policy Engineering. Phases 14 and beyond are scaffolded and in
-> progress. Want to help? See [CONTRIBUTING.md](./CONTRIBUTING.md).
+> **Current state:** Modules **00–15 are complete** — Orientation through Security and
+> Policy Engineering, plus Kubernetes Networking and Developer Experience & IDP.
+> Project 4 (module 16) and phases 17 and beyond are scaffolded and in progress. Want
+> to help? See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
@@ -154,15 +154,25 @@ is developed in the open, so each module is marked with its current status.
 
 ### Phase 11 — Kubernetes Networking
 
-- 🚧 **[14 · Kubernetes Networking](./14-kubernetes-networking/)**
-  - Networking fundamentals · CNI plugins · network policies · Cilium & eBPF ·
-    Gateway API · service mesh reference
+- ✅ **[14 · Kubernetes Networking](./14-kubernetes-networking/)**
+  - [01 · Kubernetes Networking Fundamentals](./14-kubernetes-networking/01-kubernetes-networking-fundamentals/)
+  - [02 · CNI Plugins](./14-kubernetes-networking/02-cni-plugins/)
+  - [03 · Network Policies](./14-kubernetes-networking/03-network-policies/)
+  - [04 · Cilium and eBPF](./14-kubernetes-networking/04-cilium-and-ebpf/)
+  - [05 · Kubernetes Gateway API](./14-kubernetes-networking/05-kubernetes-gateway-api/)
+  - [06 · Service Mesh Reference](./14-kubernetes-networking/06-service-mesh-reference/)
 
 ### Phase 12 — Developer Experience and IDP
 
-- 🚧 **[15 · Developer Experience and IDP](./15-developer-experience-and-idp/)**
-  - IDP architecture · Backstage fundamentals · software catalog · software
-    templates · plugins · golden paths · platform CLI tools · portal documentation
+- ✅ **[15 · Developer Experience and IDP](./15-developer-experience-and-idp/)**
+  - [01 · IDP Architecture](./15-developer-experience-and-idp/01-idp-architecture/)
+  - [02 · Backstage Fundamentals](./15-developer-experience-and-idp/02-backstage-fundamentals/)
+  - [03 · Backstage Software Catalog](./15-developer-experience-and-idp/03-backstage-software-catalog/)
+  - [04 · Backstage Software Templates](./15-developer-experience-and-idp/04-backstage-software-templates/)
+  - [05 · Backstage Plugins](./15-developer-experience-and-idp/05-backstage-plugins/)
+  - [06 · Golden Paths](./15-developer-experience-and-idp/06-golden-paths/)
+  - [07 · Platform CLI Tools](./15-developer-experience-and-idp/07-platform-cli-tools/)
+  - [08 · Developer Portal Documentation](./15-developer-experience-and-idp/08-developer-portal-documentation/)
 
 ### Project 4
 

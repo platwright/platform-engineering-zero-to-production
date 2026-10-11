@@ -1,0 +1,71 @@
+# A frontend, a backend, and an "attacker" pod — all in team-a — to prove default-deny
+# blocks lateral movement while allowing only the intended frontend -> backend flow.
+# Requires a NetworkPolicy-enforcing CNI (Calico/Cilium) — kind's default kindnet
+# does NOT enforce policy, so the lab installs Calico.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-a
+  labels:
+    kubernetes.io/metadata.name: team-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: team-a
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: web
+          image: nginxinc/nginx-unprivileged:stable-alpine
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: team-a
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend
+  namespace: team-a
+  labels:
+    app: frontend
+spec:
+  containers:
+    - name: shell
+      image: nicolaka/netshoot
+      command: ["sleep", "infinity"]
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: attacker
+  namespace: team-a
+  labels:
+    app: attacker
+spec:
+  containers:
+    - name: shell
+      image: nicolaka/netshoot
+      command: ["sleep", "infinity"]

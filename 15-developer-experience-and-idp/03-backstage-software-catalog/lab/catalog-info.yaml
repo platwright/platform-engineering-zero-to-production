@@ -1,0 +1,81 @@
+# catalog-info.yaml
+# A realistic, connected catalog graph for the Module 15.3 lab.
+# Six entities in one multi-document file: System, two Components, an API,
+# a Resource, and a Group. Trace the relationships: owner, system, dependsOn,
+# providesApis. Import this into Backstage (Create -> Register Existing Component,
+# or a catalog.locations entry in app-config.yaml).
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: order-management
+  description: Everything involved in taking and fulfilling an order
+spec:
+  owner: team-payments
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: checkout-service
+  description: Handles payment and order checkout
+  annotations:
+    github.com/project-slug: your-org/checkout-service
+    backstage.io/techdocs-ref: dir:.
+    # These annotations light up plugins in Module 15.5:
+    argocd/app-name: checkout-service
+    backstage.io/kubernetes-id: checkout-service
+spec:
+  type: service
+  lifecycle: production
+  owner: team-payments
+  system: order-management
+  providesApis:
+    - checkout-api
+  dependsOn:
+    - component:payment-gateway
+    - resource:orders-database
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: payment-gateway
+  description: Talks to the external payment processor
+  annotations:
+    github.com/project-slug: your-org/payment-gateway
+spec:
+  type: service
+  lifecycle: production
+  owner: team-payments
+  system: order-management
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: checkout-api
+  description: REST API for creating and completing checkouts
+spec:
+  type: openapi
+  lifecycle: production
+  owner: team-payments
+  system: order-management
+  definition:
+    $text: ./openapi.yaml
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: orders-database
+  description: PostgreSQL database holding orders and checkout state
+spec:
+  type: database
+  owner: team-payments
+  system: order-management
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: team-payments
+  description: Owns checkout, payments, and the orders datastore
+spec:
+  type: team
+  children: []

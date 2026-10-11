@@ -1,0 +1,105 @@
+# Two versions of an app (v1, v2) plus a DEVELOPER-owned HTTPRoute in team-a that
+# attaches to the platform Gateway and splits traffic 90/10 between them — a canary.
+# Shift the weights to roll forward; zero out v2 to roll back. No platform ticket.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-a
+  labels:
+    gateway-access: "true" # matches the Gateway's allowedRoutes selector
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-v1
+  namespace: team-a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: demo
+        version: v1
+    spec:
+      containers:
+        - name: web
+          image: hashicorp/http-echo
+          args: ["-text=hello from v1", "-listen=:8080"]
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-v1
+  namespace: team-a
+spec:
+  selector:
+    app: demo
+    version: v1
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-v2
+  namespace: team-a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: demo
+        version: v2
+    spec:
+      containers:
+        - name: web
+          image: hashicorp/http-echo
+          args: ["-text=hello from v2", "-listen=:8080"]
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-v2
+  namespace: team-a
+spec:
+  selector:
+    app: demo
+    version: v2
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: demo
+  namespace: team-a
+spec:
+  parentRefs:
+    - name: platform-gateway
+      namespace: platform-system
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: app-v1
+          port: 8080
+          weight: 90
+        - name: app-v2
+          port: 8080
+          weight: 10

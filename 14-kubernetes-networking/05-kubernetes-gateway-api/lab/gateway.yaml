@@ -1,0 +1,20 @@
+# The PLATFORM team owns this Gateway — the shared front door. It lives in
+# platform-system and allows routes from namespaces labelled with a team. The
+# gatewayClassName must match the controller you installed (the lab uses nginx).
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: platform-gateway
+  namespace: platform-system
+spec:
+  gatewayClassName: nginx
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: "true" # only namespaces with this label may attach

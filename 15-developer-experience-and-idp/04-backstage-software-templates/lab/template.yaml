@@ -1,0 +1,88 @@
+# template.yaml
+# A golden-path Software Template for a standard Go microservice.
+# Three parts: metadata, spec.parameters (the form), spec.steps (the actions).
+# Register it in Backstage with a catalog.locations entry (rules: allow [Template]).
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: go-microservice
+  title: Go Microservice
+  description: Create a production-ready Go service on the platform golden path
+  tags:
+    - recommended
+    - go
+spec:
+  owner: team-platform
+  type: service
+
+  parameters:
+    - title: Service information
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Service name
+          type: string
+          description: Lowercase, dash-separated (e.g. widget-service)
+          pattern: "^[a-z][a-z0-9-]*$"
+          ui:autofocus: true
+        description:
+          title: Description
+          type: string
+          description: One line describing what the service does
+        owner:
+          title: Owning team
+          type: string
+          description: The team that will own this service
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: Group
+
+    - title: Advanced (optional escape hatch)
+      properties:
+        baseImage:
+          title: Runtime base image
+          type: string
+          description: Override only if you have a specific need
+          default: gcr.io/distroless/static:nonroot
+
+  steps:
+    - id: fetch
+      name: Render the skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        # Preserve GitHub Actions ${{ ... }} expressions in the workflow file:
+        copyWithoutTemplating:
+          - .github/workflows/*
+        values:
+          name: "${{ parameters.name }}"
+          description: "${{ parameters.description }}"
+          owner: "${{ parameters.owner }}"
+          baseImage: "${{ parameters.baseImage }}"
+
+    - id: publish
+      name: Create the GitHub repository
+      action: publish:github
+      input:
+        description: "${{ parameters.description }}"
+        repoUrl: "github.com?owner=your-org&repo=${{ parameters.name }}"
+        defaultBranch: main
+        repoVisibility: private
+
+    - id: register
+      name: Register in the software catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: "${{ steps.publish.output.repoContentsUrl }}"
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Open the new repository
+        url: "${{ steps.publish.output.remoteUrl }}"
+      - title: View in the catalog
+        icon: catalog
+        entityRef: "${{ steps.register.output.entityRef }}"

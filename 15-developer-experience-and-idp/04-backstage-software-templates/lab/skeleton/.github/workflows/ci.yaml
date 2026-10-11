@@ -1,0 +1,18 @@
+# Rendered by the scaffolder to .github/workflows/ci.yaml in the new repo.
+# Preserved verbatim via copyWithoutTemplating so GitHub's ${{ ... }} expressions
+# survive scaffolding. This CONSUMES the platform reusable workflow (Module 06.4)
+# instead of re-authoring a pipeline.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    uses: your-org/platform-workflows/.github/workflows/app-ci.yml@v2
+    with:
+      image-name: ${{ github.event.repository.name }}
+      language: go
+    secrets: inherit
