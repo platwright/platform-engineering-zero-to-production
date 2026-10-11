@@ -1,0 +1,37 @@
+# aggregated-clusterrole.yaml — compose capability instead of copy-pasting rules.
+#
+# `app-team-admin` owns NO rules of its own. The control plane fills it by unioning
+# every ClusterRole labeled rbac.example.com/aggregate-to-app-team-admin=true.
+# Grow the aggregate by ADDING a labeled role — never by editing app-team-admin.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: app-team-admin
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        rbac.example.com/aggregate-to-app-team-admin: "true"
+rules: []  # intentionally empty — aggregation fills this in
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: app-team-read-core
+  labels:
+    rbac.example.com/aggregate-to-app-team-admin: "true"
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services", "configmaps"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: app-team-manage-deployments
+  labels:
+    rbac.example.com/aggregate-to-app-team-admin: "true"
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]

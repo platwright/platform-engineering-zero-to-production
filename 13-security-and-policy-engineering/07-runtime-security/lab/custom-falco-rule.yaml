@@ -1,0 +1,40 @@
+# Custom Falco rules for the lab — a YAML list of rule (and list) objects,
+# loaded into Falco via falco-values.yaml (customRules / --set-file).
+#
+# Built-ins used:
+#   spawned_process  — macro: a process was exec'd (execve/execveat)
+#   container        — macro: the event happened inside a container (not the host)
+#   shell_binaries   — list:  ash, bash, csh, dash, ksh, sh, zsh, ...
+
+- rule: Shell Spawned in a Container
+  desc: >
+    Detect an interactive or scripted shell executed inside any container.
+    Application containers should not spawn shells at runtime; this is a classic
+    post-exploitation / hands-on-keyboard signal.
+  condition: >
+    spawned_process and container
+    and proc.name in (shell_binaries)
+  output: >
+    Shell spawned in a container
+    (ns=%k8s.ns.name pod=%k8s.pod.name container=%container.name
+    shell=%proc.name cmd=%proc.cmdline user=%user.name
+    image=%container.image.repository)
+  priority: WARNING
+  tags: [shell, mitre_execution, T1059]
+
+# A named list reused by the stricter rule below. Adjust it to your environment.
+- list: production_namespaces
+  items: [prod, production, payments]
+
+# Stricter variant: the same behaviour in a production namespace is CRITICAL.
+- rule: Shell Spawned in a Production Container
+  desc: A shell was spawned inside a container running in a production namespace.
+  condition: >
+    spawned_process and container
+    and proc.name in (shell_binaries)
+    and k8s.ns.name in (production_namespaces)
+  output: >
+    Shell spawned in a PRODUCTION container
+    (ns=%k8s.ns.name pod=%k8s.pod.name cmd=%proc.cmdline user=%user.name)
+  priority: CRITICAL
+  tags: [shell, mitre_execution, production]

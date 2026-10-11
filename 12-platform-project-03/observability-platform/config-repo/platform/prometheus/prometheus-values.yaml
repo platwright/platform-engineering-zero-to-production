@@ -1,0 +1,48 @@
+# kube-prometheus-stack Helm values — a laptop-sized install (Prometheus + Grafana +
+# Alertmanager + the exporters). NOT production sizing; see architecture.md for the
+# production (GCS/Mimir, HA) considerations.
+#
+# helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+# helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+#   -n observability --create-namespace -f prometheus-values.yaml
+prometheus:
+  prometheusSpec:
+    retention: 24h # short local retention; long-term goes to GCS/Mimir in Pass 2
+    resources:
+      requests:
+        cpu: 100m
+        memory: 400Mi
+      limits:
+        memory: 1Gi
+    # Pick up PrometheusRule objects regardless of their release label.
+    ruleSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+grafana:
+  adminPassword: admin # LOCAL LAB ONLY — never do this in production
+  defaultDashboardsEnabled: true
+  # Mount our dashboards-as-code and datasources (provisioned from config-repo).
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+    datasources:
+      enabled: true
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+
+# Trim node/control-plane scrape targets that don't exist on kind, to reduce noise.
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeProxy:
+  enabled: false

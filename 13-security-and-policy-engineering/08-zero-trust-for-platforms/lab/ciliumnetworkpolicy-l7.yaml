@@ -1,0 +1,28 @@
+# L7 zero-trust authorization: allow ONLY frontend -> backend GET /api/*.
+#
+# endpointSelector picks the backend by LABEL (identity), not IP, so the rule
+# survives pod churn. The ingress rule allows traffic only from pods labelled
+# app=frontend, only on port 80, and — because of the http rules — only the GET
+# method on paths matching /api/.*. Every other caller, method, or path is denied
+# at L7 by Cilium's proxy. Requires Cilium (standard NetworkPolicy cannot do L7).
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-frontend-to-backend-l7
+  namespace: zt-demo
+spec:
+  endpointSelector:
+    matchLabels:
+      app: backend
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: frontend
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+          rules:
+            http:
+              - method: "GET"
+                path: "/api/.*"

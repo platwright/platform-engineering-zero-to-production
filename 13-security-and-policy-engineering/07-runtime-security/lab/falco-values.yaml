@@ -1,0 +1,46 @@
+# Falco Helm values — runtime security DaemonSet for the lab.
+#
+# Install with (run from this lab/ directory):
+#
+#   helm repo add falcosecurity https://falcosecurity.github.io/charts
+#   helm repo update
+#   helm install falco falcosecurity/falco \
+#     --namespace falco --create-namespace \
+#     -f falco-values.yaml \
+#     --set-file customRules."custom-falco-rule\.yaml"=./custom-falco-rule.yaml
+#
+# The --set-file flag loads ./custom-falco-rule.yaml into the customRules map
+# below (see the note there). Chart: falcosecurity/falco.
+
+driver:
+  # modern_ebpf needs a Linux kernel >= 5.8 with BTF (most 2021+ distros, recent
+  # kind node images, and Docker Desktop). If it fails to load on an older kernel,
+  # reinstall with one of:
+  #   kind: ebpf      # legacy eBPF probe (downloaded/compiled for your kernel)
+  #   kind: kmod      # kernel module (needs kernel headers on the host)
+  kind: modern_ebpf
+
+# Run Falco as a DaemonSet (one pod per node) — the default collector mode.
+controller:
+  kind: daemonset
+
+# Emit alerts to stdout as JSON so `kubectl logs` shows them (and keep the output
+# line-buffered so they appear immediately).
+tty: true
+falco:
+  json_output: true
+  stdout_output:
+    enabled: true
+  # priority: debug   # uncomment to evaluate every rule, not just informational+
+
+# customRules is populated at install time via --set-file (see the command above).
+# To hardcode the rule instead, replace {} with a map of <filename>: |- <rules>,
+# for example:
+#   custom-falco-rule.yaml: |-
+#     - rule: Shell Spawned in a Container
+#       desc: Detect a shell executed inside any container
+#       condition: spawned_process and container and proc.name in (shell_binaries)
+#       output: Shell in container (pod=%k8s.pod.name cmd=%proc.cmdline)
+#       priority: WARNING
+#       tags: [shell, mitre_execution]
+customRules: {}

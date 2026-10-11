@@ -1,0 +1,76 @@
+# OTel Collector — GATEWAY (Deployment).
+# Receives OTLP from apps and the node agents, batches, applies tail-based sampling
+# to traces (keep errors + slow traces, drop most of the rest), and exports to the
+# backends. Tail sampling lives HERE because only a central tier sees a whole trace.
+#
+# This is a reference config. In Pass 1 you install it via the OTel Collector Helm
+# chart with `mode: deployment`; in Pass 2 ArgoCD delivers it.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-gateway-config
+  namespace: observability
+data:
+  collector.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+
+    processors:
+      # Batch for efficiency before export.
+      batch:
+        timeout: 5s
+        send_batch_size: 1024
+      # Protect the collector from memory spikes.
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 80
+        spike_limit_percentage: 25
+      # Tail-based sampling: decide AFTER seeing the whole trace.
+      tail_sampling:
+        decision_wait: 10s
+        policies:
+          - name: keep-errors
+            type: status_code
+            status_code:
+              status_codes: [ERROR]
+          - name: keep-slow
+            type: latency
+            latency:
+              threshold_ms: 500
+          - name: sample-the-rest
+            type: probabilistic
+            probabilistic:
+              sampling_percentage: 10
+
+    exporters:
+      # Metrics → Prometheus (scraped from this endpoint).
+      prometheus:
+        endpoint: 0.0.0.0:8889
+      # Traces → Tempo via OTLP.
+      otlp/tempo:
+        endpoint: tempo.observability.svc:4317
+        tls:
+          insecure: true
+      # Logs → Loki via OTLP.
+      otlphttp/loki:
+        endpoint: http://loki.observability.svc:3100/otlp
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, tail_sampling, batch]
+          exporters: [otlp/tempo]
+        metrics:
+          receivers: [otlp]
+          processors: [memory_limiter, batch]
+          exporters: [prometheus]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, batch]
+          exporters: [otlphttp/loki]

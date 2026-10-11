@@ -1,0 +1,33 @@
+# encryption-config.yaml — Kubernetes EncryptionConfiguration (REFERENCE ONLY).
+#
+# This is a control-plane file, applied to the API server's
+# --encryption-provider-config flag. On managed clusters the provider manages this;
+# shown here as reference — NOT applied in the kind lab.
+#
+# It encrypts the `secrets` resource in etcd at rest. Providers are tried in order for
+# WRITES (first wins); for READS, all are tried until one decrypts. Listing `kms` first
+# means new writes use envelope encryption via an external KMS; the `aescbc` block is a
+# fallback so previously-written data stays readable during migration. `identity` last
+# means "plaintext" and must never be first if you want encryption on.
+apiVersion: apiserver.config.k8s.io/v1
+kind: EncryptionConfiguration
+resources:
+  - resources:
+      - secrets
+    providers:
+      # Preferred: external KMS plugin (envelope encryption). The key-encryption key
+      # (KEK) never leaves the KMS; each write gets a fresh data-encryption key (DEK).
+      - kms:
+          apiVersion: v2
+          name: cloud-kms-plugin
+          endpoint: unix:///var/run/kmsplugin/socket.sock
+          timeout: 3s
+      # Fallback: local AES-CBC key material held in THIS file on the control-plane
+      # node. Weaker than KMS (key sits next to the data); useful for migration only.
+      - aescbc:
+          keys:
+            - name: key1
+              # Example 32-byte base64 key — REPLACE and keep out of Git in real use.
+              secret: c2VjcmV0LWlzLW5vdC1hLXJlYWwta2V5LTAwMDAwMDA=
+      # Allows reading any still-unencrypted secrets. Must be last; never first.
+      - identity: {}

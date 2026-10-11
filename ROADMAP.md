@@ -11,11 +11,10 @@ is developed in the open, so each module is marked with its current status.
 | 🚧 | In progress / scaffolded — outline exists, content being written |
 | 🗓️ | Planned — not yet started |
 
-> **Current state:** Modules **00–10 are complete** — Orientation, Platform
-> Foundations, Containerization, Kubernetes Fundamentals, Project 1 (Container
-> Platform Foundation), Infrastructure as Code, CI/CD, Package Management, GitOps,
-> Project 2 (GitOps Platform), and Kubernetes Advanced. Phases 11 and beyond are
-> scaffolded and in progress. Want to help? See [CONTRIBUTING.md](./CONTRIBUTING.md).
+> **Current state:** Modules **00–13 are complete** — Orientation through Kubernetes
+> Advanced, plus Observability Engineering, Project 3 (Observability Platform), and
+> Security and Policy Engineering. Phases 14 and beyond are scaffolded and in
+> progress. Want to help? See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
@@ -126,19 +125,32 @@ is developed in the open, so each module is marked with its current status.
 
 ### Phase 9 — Observability Engineering
 
-- 🚧 **[11 · Observability Engineering](./11-observability-engineering/)**
-  - Observability fundamentals · OpenTelemetry · Prometheus · Loki · Tempo ·
-    Grafana dashboards · SLOs & error budgets · platform observability strategy
+- ✅ **[11 · Observability Engineering](./11-observability-engineering/)**
+  - [01 · Observability Fundamentals](./11-observability-engineering/01-observability-fundamentals/)
+  - [02 · OpenTelemetry](./11-observability-engineering/02-opentelemetry/)
+  - [03 · Metrics with Prometheus](./11-observability-engineering/03-metrics-with-prometheus/)
+  - [04 · Logging with Loki](./11-observability-engineering/04-logging-with-loki/)
+  - [05 · Distributed Tracing with Tempo](./11-observability-engineering/05-distributed-tracing-with-tempo/)
+  - [06 · Grafana Dashboards](./11-observability-engineering/06-grafana-dashboards/)
+  - [07 · SLOs and Error Budgets](./11-observability-engineering/07-slos-and-error-budgets/)
+  - [08 · Platform Observability Strategy](./11-observability-engineering/08-platform-observability-strategy/)
 
 ### Project 3
 
-- 🚧 **[12 · Platform Project 03 — Observability Platform](./12-platform-project-03/)**
+- ✅ **[12 · Platform Project 03 — Observability Platform](./12-platform-project-03/)**
+  - [Project brief & build guide](./12-platform-project-03/observability-platform/README.md)
 
 ### Phase 10 — Security and Policy Engineering
 
-- 🚧 **[13 · Security and Policy Engineering](./13-security-and-policy-engineering/)**
-  - Security principles · RBAC deep dive · Kyverno · secret management ·
-    supply chain security · image signing · runtime security · zero trust
+- ✅ **[13 · Security and Policy Engineering](./13-security-and-policy-engineering/)**
+  - [01 · Security Principles](./13-security-and-policy-engineering/01-security-principles/)
+  - [02 · Kubernetes RBAC Deep Dive](./13-security-and-policy-engineering/02-kubernetes-rbac-deep-dive/)
+  - [03 · Policy as Code with Kyverno](./13-security-and-policy-engineering/03-policy-as-code-with-kyverno/)
+  - [04 · Secret Management](./13-security-and-policy-engineering/04-secret-management/)
+  - [05 · Supply Chain Security](./13-security-and-policy-engineering/05-supply-chain-security/)
+  - [06 · Image Signing and Verification](./13-security-and-policy-engineering/06-image-signing-and-verification/)
+  - [07 · Runtime Security](./13-security-and-policy-engineering/07-runtime-security/)
+  - [08 · Zero Trust for Platforms](./13-security-and-policy-engineering/08-zero-trust-for-platforms/)
 
 ### Phase 11 — Kubernetes Networking
 

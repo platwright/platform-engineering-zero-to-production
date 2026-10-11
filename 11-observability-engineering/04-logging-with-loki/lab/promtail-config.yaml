@@ -1,0 +1,32 @@
+# Promtail: tail the generator's log file and push to Loki.
+#
+# The golden rule in action: ONLY `level` is promoted to a label (info/warn/error
+# -- bounded). `trace_id`, `route`, and `status` are left IN the line, to be parsed
+# by LogQL at query time. Adding `trace_id` to the `labels` stage below would create
+# a new stream per request and overwhelm Loki -- that is the mistake to avoid.
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: app
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: app
+          service: checkout
+          __path__: /var/log/app/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level: # promote ONLY level to a label (low-cardinality)

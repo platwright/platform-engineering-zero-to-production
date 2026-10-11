@@ -1,0 +1,39 @@
+# A harmless pod you exec a shell into to trigger the Falco rule.
+# It runs in the DEFAULT namespace (no PSS enforcement) so it schedules freely and
+# you can `kubectl exec` a /bin/sh into it.
+#
+# NOTE: this spec would be REJECTED by the restricted-demo namespace
+# (pss-namespace.yaml) because it lacks a hardened securityContext. To run it there,
+# uncomment the securityContext blocks below:
+#
+#   spec:
+#     securityContext:                      # pod-level
+#       runAsNonRoot: true
+#       seccompProfile:
+#         type: RuntimeDefault
+#     containers:
+#       - name: app
+#         securityContext:                  # container-level
+#           allowPrivilegeEscalation: false
+#           readOnlyRootFilesystem: true
+#           capabilities:
+#             drop: ["ALL"]
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shell-demo
+  namespace: default
+  labels:
+    app: shell-demo
+spec:
+  containers:
+    - name: app
+      image: alpine:3.20
+      command: ["sleep", "3600"]
+      resources:
+        requests:
+          cpu: 10m
+          memory: 16Mi
+        limits:
+          cpu: 50m
+          memory: 32Mi

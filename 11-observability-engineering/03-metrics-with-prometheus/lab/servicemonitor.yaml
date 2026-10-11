@@ -1,0 +1,17 @@
+# A ServiceMonitor tells the Prometheus Operator to scrape the Pods behind a
+# Service. The `release: kube-prom-stack` label is what makes THIS stack's
+# Prometheus select it -- without it, the target is silently never scraped.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: prometheus-example-app
+  labels:
+    release: kube-prom-stack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-example-app
+  endpoints:
+    - port: web # must match the Service's named port
+      path: /metrics
+      interval: 15s

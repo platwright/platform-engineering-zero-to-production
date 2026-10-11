@@ -1,0 +1,66 @@
+# OTel Collector — AGENT (DaemonSet).
+# One per node, close to the workloads. Collects node/host metrics and tails pod
+# logs, then forwards everything to the GATEWAY (it does not export to backends
+# directly — the gateway owns sampling and fan-out).
+#
+# Reference config; in Pass 1 install via the OTel Collector Helm chart with
+# `mode: daemonset`.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-agent-config
+  namespace: observability
+data:
+  collector.yaml: |
+    receivers:
+      # Receive OTLP from apps running on this node.
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+      # Host metrics for this node.
+      hostmetrics:
+        collection_interval: 30s
+        scrapers:
+          cpu: {}
+          memory: {}
+          disk: {}
+          filesystem: {}
+          network: {}
+      # Tail container logs on this node.
+      filelog:
+        include:
+          - /var/log/pods/*/*/*.log
+        start_at: end
+
+    processors:
+      batch:
+        timeout: 5s
+      # Attach k8s metadata (namespace, pod, node) to every signal.
+      k8sattributes: {}
+      resourcedetection:
+        detectors: [env, system]
+
+    exporters:
+      # Forward everything to the gateway for sampling + fan-out.
+      otlp/gateway:
+        endpoint: otel-gateway.observability.svc:4317
+        tls:
+          insecure: true
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [k8sattributes, batch]
+          exporters: [otlp/gateway]
+        metrics:
+          receivers: [otlp, hostmetrics]
+          processors: [resourcedetection, k8sattributes, batch]
+          exporters: [otlp/gateway]
+        logs:
+          receivers: [filelog]
+          processors: [k8sattributes, batch]
+          exporters: [otlp/gateway]

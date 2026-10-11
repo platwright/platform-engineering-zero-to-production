@@ -10,9 +10,39 @@ curriculum progress. See the [ROADMAP](./ROADMAP.md) for the full plan and statu
 
 ### Planned
 
-- Phase 9 — Observability Engineering (module `11`).
-- Phase 10 — Security and Policy Engineering (module `13`).
+- Phase 11 — Kubernetes Networking (module `14`).
+- Phase 12 — Developer Experience and IDP (module `15`).
 - Remaining phases and projects per the [ROADMAP](./ROADMAP.md).
+
+## [0.4.0] — 2026-10-11
+
+Observability through Security: two full phases plus the observability platform
+project.
+
+### Added
+
+- **Module 11 — Observability Engineering** (complete) — 8 submodules + labs:
+  observability fundamentals, OpenTelemetry, metrics with Prometheus, logging with
+  Loki, distributed tracing with Tempo, Grafana dashboards, SLOs & error budgets,
+  and platform observability strategy. Runnable local/Compose labs with collector
+  configs, PromQL/LogQL/TraceQL snippets, a Grafana dashboard (JSON + Jsonnet), and
+  Sloth SLO definitions.
+- **Project 3 — Observability Platform** (complete) — a full OTel + Prometheus/Loki/
+  Tempo/Grafana stack with a DaemonSet + gateway collector topology (tail sampling),
+  Grafana datasources with trace/log/metric correlation, a Platform Overview
+  Dashboard as code, a Sloth SLO, and a sample burn-rate alert. Includes an
+  architecture doc, four ADRs, a staged build guide, onboarding guide, runbooks, and
+  bootstrap/cleanup scripts.
+- **Module 13 — Security and Policy Engineering** (complete) — 8 submodules + labs:
+  security principles (defence-in-depth, CIS, OWASP K8s Top 10), RBAC deep dive,
+  policy-as-code with Kyverno, secret management (Vault + ESO), supply-chain security
+  (SLSA, Syft, Grype), image signing & verification (Cosign + Kyverno verifyImages),
+  runtime security (Falco), and zero trust (SPIFFE, mTLS, Cilium L7). Ties back to
+  Project 1's ADR-004/ADR-005 and Project 2's signed-image policy.
+
+### Changed
+
+- `ROADMAP.md` updated: modules `11`–`13` marked complete with per-submodule links.
 
 ## [0.3.0] — 2026-10-10
 
@@ -120,7 +150,8 @@ The foundation release: repository scaffolding plus the first two modules.
   - `05` Platform Team Topology
   - Each with a full lesson and a hands-on lab.
 
-[Unreleased]: ../../compare/v0.3.0...HEAD
+[Unreleased]: ../../compare/v0.4.0...HEAD
+[0.4.0]: ../../releases/tag/v0.4.0
 [0.3.0]: ../../releases/tag/v0.3.0
 [0.2.0]: ../../releases/tag/v0.2.0
 [0.1.0]: ../../releases/tag/v0.1.0

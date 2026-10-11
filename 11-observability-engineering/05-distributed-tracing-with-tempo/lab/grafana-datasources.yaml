@@ -1,0 +1,33 @@
+# Grafana datasource provisioning wires up BOTH pillars and the links between them:
+#   - Tempo  -> tracesToLogsV2: from a trace span, jump to its logs in Loki.
+#   - Loki   -> derivedFields: extract trace_id from each log line and link to Tempo.
+# Together they give you a two-way log <-> trace pivot with no manual clicks.
+apiVersion: 1
+
+datasources:
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: http://tempo:3200
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: loki
+        filterByTraceID: true
+        spanStartTimeShift: "-1h"
+        spanEndTimeShift: "1h"
+
+  - name: Loki
+    type: loki
+    uid: loki
+    access: proxy
+    url: http://loki:3100
+    isDefault: true
+    jsonData:
+      derivedFields:
+        - name: TraceID
+          # Capture the trace_id value out of each JSON log line...
+          matcherRegex: '"trace_id":"(\w+)"'
+          # ...and turn it into a link into the Tempo data source.
+          datasourceUid: tempo
+          url: '$${__value.raw}'

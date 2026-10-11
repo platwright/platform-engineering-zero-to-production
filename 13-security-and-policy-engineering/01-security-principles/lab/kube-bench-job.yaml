@@ -1,0 +1,61 @@
+# kube-bench — run the CIS Kubernetes Benchmark as a Job.
+#
+# Scores this node/cluster against the CIS Benchmark and writes the result to the
+# pod log. kube-bench auto-detects the Kubernetes version and the appropriate CIS
+# target set. On kind, control-plane/etcd checks may be partial (the control plane
+# runs as containers) — that is expected; the exercise is learning to run and read
+# a benchmark. See https://github.com/aquasecurity/kube-bench for details.
+#
+#   kubectl apply -f kube-bench-job.yaml
+#   kubectl wait --for=condition=complete --timeout=120s job/kube-bench
+#   kubectl logs -f job/kube-bench
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kube-bench
+  labels:
+    app: kube-bench
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app: kube-bench
+    spec:
+      hostPID: true
+      restartPolicy: Never
+      # Allow scheduling onto the control-plane node so node-level checks run.
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: kube-bench
+          image: docker.io/aquasec/kube-bench:v0.10.7
+          command: ["kube-bench"]
+          args: ["run"]
+          securityContext:
+            # kube-bench needs to read host config files to audit them. This is a
+            # deliberately privileged diagnostic Job, not an app workload.
+            runAsUser: 0
+          volumeMounts:
+            - name: var-lib-kubelet
+              mountPath: /var/lib/kubelet
+              readOnly: true
+            - name: etc-systemd
+              mountPath: /etc/systemd
+              readOnly: true
+            - name: etc-kubernetes
+              mountPath: /etc/kubernetes
+              readOnly: true
+      volumes:
+        - name: var-lib-kubelet
+          hostPath:
+            path: /var/lib/kubelet
+        - name: etc-systemd
+          hostPath:
+            path: /etc/systemd
+        - name: etc-kubernetes
+          hostPath:
+            path: /etc/kubernetes

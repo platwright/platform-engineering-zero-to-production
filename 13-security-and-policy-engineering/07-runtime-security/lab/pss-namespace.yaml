@@ -1,0 +1,20 @@
+# A namespace that enforces the 'restricted' Pod Security Standard at admission.
+# Pod Security Admission is built into Kubernetes — there is no controller to install.
+#
+# A pod that runs as root, requests privileged mode, adds capabilities, allows
+# privilege escalation, or omits seccompProfile: RuntimeDefault is REJECTED here
+# before it is ever scheduled. This is prevention (at admission), the complement to
+# Falco's runtime detection (layer 7).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: restricted-demo
+  labels:
+    # enforce: reject violating pods. warn/audit: also surface violations as API
+    # warnings and audit-log annotations (useful while migrating a namespace).
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: latest

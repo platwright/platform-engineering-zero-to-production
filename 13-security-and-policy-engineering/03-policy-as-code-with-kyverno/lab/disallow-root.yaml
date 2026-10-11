@@ -1,0 +1,40 @@
+# Disallow root containers.
+# Every container (and the pod) must run as a non-root user. This is the single
+# highest-leverage workload control (see Module 02.5). Ships in Audit so you can
+# measure the gap first; the lab patches it to Enforce.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-root
+  annotations:
+    policies.kyverno.io/title: Disallow Root Containers
+    policies.kyverno.io/category: Pod Security
+    policies.kyverno.io/description: >-
+      Requires runAsNonRoot=true at the pod level so no container runs as UID 0.
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: check-run-as-non-root
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: >-
+          Running as root is not allowed. Set spec.securityContext.runAsNonRoot to
+          true, or set securityContext.runAsNonRoot to true on every container.
+        anyPattern:
+          # Option A: non-root enforced at the pod level.
+          - spec:
+              securityContext:
+                runAsNonRoot: true
+              containers:
+                - =(securityContext):
+                    =(runAsNonRoot): true
+          # Option B: non-root enforced on every container.
+          - spec:
+              containers:
+                - securityContext:
+                    runAsNonRoot: true

@@ -1,0 +1,29 @@
+# A RUNNABLE SLO for Module 11.3's sample app, so the optional live extension can
+# actually move the SLI. The brancz example app returns 404 on /err (not 5xx), so we
+# count 4xx+5xx as errors here to make the demo visible; a real availability SLO
+# would usually count 5xx (and 429) only.
+apiVersion: sloth.slok.dev/v1
+kind: PrometheusServiceLevel
+metadata:
+  name: sample-app
+  namespace: monitoring
+spec:
+  service: checkout
+  labels:
+    team: platform
+  slos:
+    - name: requests-availability
+      objective: 99.9
+      description: "Sample-app HTTP requests succeed."
+      sli:
+        events:
+          error_query: sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[{{.window}}]))
+          total_query: sum(rate(http_requests_total{job="prometheus-example-app"}[{{.window}}]))
+      alerting:
+        name: CheckoutHighErrorRate
+        page_alert:
+          labels:
+            severity: page
+        ticket_alert:
+          labels:
+            severity: ticket

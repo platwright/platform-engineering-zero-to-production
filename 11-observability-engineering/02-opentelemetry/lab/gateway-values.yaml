@@ -1,0 +1,62 @@
+# OpenTelemetry Collector -- GATEWAY role (a horizontally scaled Deployment).
+#
+# The gateway is the shared control point. Agents forward to it; it does the
+# expensive, cluster-wide work. In this lab it simply prints everything through
+# the `debug` exporter so you can watch telemetry arrive. In Module 11.5 you will
+# add an `otlp` exporter here pointing at Tempo -- with no application change.
+#
+# Install:
+#   helm install otel-gateway open-telemetry/opentelemetry-collector \
+#     --version 0.108.0 -f gateway-values.yaml
+#
+# Chart 0.108.0 works with Helm 3; newer chart versions may require Helm 4.
+
+mode: deployment
+fullnameOverride: otel-gateway
+replicaCount: 1
+
+image:
+  repository: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s
+command:
+  name: otelcol-k8s
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 512Mi
+
+config:
+  receivers:
+    # Helm does not merge lists, and unused defaults add noise -- remove them.
+    jaeger: null
+    zipkin: null
+    prometheus: null
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+  processors:
+    memory_limiter: # FIRST: shed load before the shared gateway OOMs
+      check_interval: 1s
+      limit_percentage: 80
+      spike_limit_percentage: 25
+    batch: {} # LAST: fewer, larger exports
+  exporters:
+    debug:
+      verbosity: detailed
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [debug]
+      metrics:
+        receivers: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [debug]
+      logs:
+        receivers: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [debug]

@@ -1,0 +1,33 @@
+-- LogQL cheat sheet for this lab. Paste into Grafana Explore (Loki data source).
+-- A LogQL query ALWAYS starts with a {label selector}; line content is parsed after.
+
+-- ========== Log queries (return lines) ==========
+
+-- Everything for the service (labels: service, job, level)
+{service="checkout"}
+
+-- Cheap line filter: lines that contain the word "error"
+{service="checkout"} |= "error"
+
+-- Precise: parse JSON, then match the parsed `level` field
+{service="checkout"} | json | level="error"
+
+-- Filter by a field that is NOT a label -- it lives in the line, parsed at query time
+{service="checkout"} | json | status >= 500
+
+-- Find slow requests using a numeric parsed field
+{service="checkout"} | json | latency_ms > 200
+
+-- Show only the message, dropping JSON noise
+{service="checkout"} | json | level="error" | line_format "{{.msg}}"
+
+-- ========== Metric queries (return time series -- switch viz to Graph) ==========
+
+-- Error lines per second (the canonical log-derived error rate)
+sum(rate({service="checkout"} | json | level="error" [5m]))
+
+-- Count by level over a window
+sum by (level) (count_over_time({service="checkout"} | json [5m]))
+
+-- Approximate p99 latency FROM logs (Prometheus histograms are still better for this)
+quantile_over_time(0.99, {service="checkout"} | json | unwrap latency_ms [5m])

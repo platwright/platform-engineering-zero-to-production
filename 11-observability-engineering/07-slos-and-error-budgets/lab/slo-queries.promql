@@ -1,0 +1,33 @@
+-- SLO / error-budget PromQL for the sample app (SLO = 99.9%, budget = 0.001).
+-- Paste into the Prometheus Graph tab. The SLI "bad-event ratio" is good/valid
+-- inverted: lower is better.
+
+-- SLI: bad-event ratio over 30m
+sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[30m]))
+  / sum(rate(http_requests_total{job="prometheus-example-app"}[30m]))
+
+-- Burn rate = error ratio / error budget. >1 means burning faster than sustainable.
+(
+  sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[1h]))
+    / sum(rate(http_requests_total{job="prometheus-example-app"}[1h]))
+) / 0.001
+
+-- Fraction of the 30-day budget still remaining (1 = full, 0 = exhausted).
+-- Approximation using a 30d SLI window; real tooling tracks consumption continuously.
+1 - (
+  (
+    sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[30d]))
+      / sum(rate(http_requests_total{job="prometheus-example-app"}[30d]))
+  ) / 0.001
+)
+
+-- Page condition (fast burn): true when burning >=14.4x over BOTH 1h and 5m.
+(
+  sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[1h]))
+    / sum(rate(http_requests_total{job="prometheus-example-app"}[1h]))
+) / 0.001 > 14.4
+and
+(
+  sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[5m]))
+    / sum(rate(http_requests_total{job="prometheus-example-app"}[5m]))
+) / 0.001 > 14.4

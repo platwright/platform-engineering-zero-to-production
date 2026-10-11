@@ -1,0 +1,46 @@
+# The smallest real Collector pipeline: receive OTLP, protect memory, batch, print.
+#
+# Run it locally with Docker (no Kubernetes needed) and send it a trace:
+#
+#   docker run --rm -p 4317:4317 -p 4318:4318 \
+#     -v "$PWD/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml" \
+#     otel/opentelemetry-collector-contrib:0.111.0
+#
+#   telemetrygen traces --otlp-insecure --otlp-endpoint localhost:4317 --traces 5
+#
+# Swap the `debug` exporter for an `otlp` exporter pointing at Tempo and the same
+# apps now feed a real trace store -- that swap is the whole point of OpenTelemetry.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  memory_limiter: # FIRST -- shed load before the Collector OOMs and drops everyone's data
+    check_interval: 1s
+    limit_percentage: 80
+    spike_limit_percentage: 25
+  batch: {} # LAST -- group into fewer, larger exports
+
+exporters:
+  debug:
+    verbosity: detailed
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]

@@ -1,0 +1,22 @@
+# .grype.yaml — Grype configuration for the Module 13.5 lab.
+# Grype auto-loads a .grype.yaml from the current directory, so `grype <target>` picks
+# these settings up with no extra flags.
+
+# The CI GATE: exit non-zero when a vulnerability of this severity or higher is found.
+# "high" means High and Critical findings fail the build.
+fail-on-severity: high
+
+# Human-readable output for the lab. In CI, use "json" or "cyclonedx" and store the
+# result as a build artifact.
+output: table
+
+# Triage list. Everything here is a DOCUMENTED, DELIBERATE exception — never a way to turn
+# a red build green. Each entry names a specific CVE and should carry a reason, and the
+# list should be reviewed on a schedule so stale ignores don't hide real risk.
+#
+# Triage a false positive or an un-fixable transitive CVE when EITHER is true:
+#   - the vulnerable code path is not reachable in how we use the package, OR
+#   - no fixed version exists yet and we accept the risk until one ships.
+ignore:
+  # EXAMPLE ONLY — replace with a real CVE ID from your own `grype` output.
+  - vulnerability: CVE-2024-00000

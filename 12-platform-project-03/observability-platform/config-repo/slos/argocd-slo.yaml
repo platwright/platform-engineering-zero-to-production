@@ -1,0 +1,37 @@
+# SLOs for PLATFORM services, defined with Sloth. Sloth turns this short spec into
+# the Prometheus recording rules and multi-window burn-rate alerts that implement
+# the Google SRE methodology — so you don't hand-write brittle burn-rate PromQL.
+#
+# Generate the rules: `sloth generate -i argocd-slo.yaml -o argocd-slo-rules.yaml`
+# then load the output into Prometheus (or let the Sloth controller do it in-cluster).
+apiVersion: sloth.slok.dev/v1
+kind: PrometheusServiceLevel
+metadata:
+  name: argocd-slo
+  namespace: observability
+spec:
+  service: argocd
+  labels:
+    team: platform
+  slos:
+    - name: sync-availability
+      objective: 99.9 # 99.9% of ArgoCD app syncs succeed over the window
+      description: ArgoCD application syncs should succeed.
+      sli:
+        events:
+          errorQuery: |
+            sum(rate(argocd_app_sync_total{phase="Error"}[{{.window}}]))
+          totalQuery: |
+            sum(rate(argocd_app_sync_total[{{.window}}]))
+      alerting:
+        name: ArgoCDSyncErrorBudgetBurn
+        labels:
+          category: platform
+        annotations:
+          runbook_url: https://github.com/your-org/platform/blob/main/runbooks/argocd-sync.md
+        pageAlert:
+          labels:
+            severity: page
+        ticketAlert:
+          labels:
+            severity: ticket

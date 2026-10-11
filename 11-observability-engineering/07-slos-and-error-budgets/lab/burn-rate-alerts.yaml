@@ -1,0 +1,74 @@
+# Hand-written multi-window, multi-burn-rate alerts (the Google SRE method) for the
+# sample app. This is EXACTLY what Sloth generates for you -- study it to understand
+# the output, then let Sloth maintain it per service.
+#
+# SLO = 99.9%  ->  error budget = 1 - 0.999 = 0.001.
+# A burn rate of N means the SLI error ratio exceeds N * 0.001.
+# Each tier requires a LONG and a SHORT window to agree: the long window proves the
+# burn is sustained; the short window makes the alert fire -- and reset -- quickly.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: checkout-slo-burn-rate
+  labels:
+    release: kube-prom-stack
+spec:
+  groups:
+    - name: checkout-slo-sli.rules
+      rules:
+        # Pre-computed SLI (bad-event ratio) at every window the alerts need.
+        - record: checkout:sli_error:ratio_rate5m
+          expr: |
+            sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[5m]))
+              / sum(rate(http_requests_total{job="prometheus-example-app"}[5m]))
+        - record: checkout:sli_error:ratio_rate30m
+          expr: |
+            sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[30m]))
+              / sum(rate(http_requests_total{job="prometheus-example-app"}[30m]))
+        - record: checkout:sli_error:ratio_rate1h
+          expr: |
+            sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[1h]))
+              / sum(rate(http_requests_total{job="prometheus-example-app"}[1h]))
+        - record: checkout:sli_error:ratio_rate2h
+          expr: |
+            sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[2h]))
+              / sum(rate(http_requests_total{job="prometheus-example-app"}[2h]))
+        - record: checkout:sli_error:ratio_rate6h
+          expr: |
+            sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[6h]))
+              / sum(rate(http_requests_total{job="prometheus-example-app"}[6h]))
+        - record: checkout:sli_error:ratio_rate1d
+          expr: |
+            sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[1d]))
+              / sum(rate(http_requests_total{job="prometheus-example-app"}[1d]))
+        - record: checkout:sli_error:ratio_rate3d
+          expr: |
+            sum(rate(http_requests_total{job="prometheus-example-app", code=~"4..|5.."}[3d]))
+              / sum(rate(http_requests_total{job="prometheus-example-app"}[3d]))
+
+    - name: checkout-slo-alerts.rules
+      rules:
+        # PAGE: fast burn. 14.4x over 1h+5m, OR 6x over 6h+30m.
+        - alert: CheckoutErrorBudgetBurnFast
+          expr: |
+            (checkout:sli_error:ratio_rate1h > (14.4 * 0.001) and checkout:sli_error:ratio_rate5m > (14.4 * 0.001))
+            or
+            (checkout:sli_error:ratio_rate6h > (6 * 0.001) and checkout:sli_error:ratio_rate30m > (6 * 0.001))
+          for: 2m
+          labels:
+            severity: page
+          annotations:
+            summary: "checkout is burning its error budget fast"
+            runbook_url: "https://runbooks.example.com/checkout-availability"
+        # TICKET: slow burn. 3x over 1d+2h, OR 1x over 3d+6h.
+        - alert: CheckoutErrorBudgetBurnSlow
+          expr: |
+            (checkout:sli_error:ratio_rate1d > (3 * 0.001) and checkout:sli_error:ratio_rate2h > (3 * 0.001))
+            or
+            (checkout:sli_error:ratio_rate3d > (1 * 0.001) and checkout:sli_error:ratio_rate6h > (1 * 0.001))
+          for: 15m
+          labels:
+            severity: ticket
+          annotations:
+            summary: "checkout has a slow error-budget leak"
+            runbook_url: "https://runbooks.example.com/checkout-availability"

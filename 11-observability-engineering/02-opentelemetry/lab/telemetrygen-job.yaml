@@ -1,0 +1,31 @@
+# A throwaway load generator that sends OTLP traces into the AGENT, exercising
+# the full path: telemetrygen -> otel-agent (DaemonSet) -> otel-gateway -> debug.
+#
+#   kubectl apply -f telemetrygen-job.yaml
+#   kubectl wait --for=condition=complete job/telemetrygen --timeout=90s
+#
+# telemetrygen is a dev/test tool, so `latest` is acceptable here; pin a version
+# tag in production.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: telemetrygen
+  labels:
+    app.kubernetes.io/name: telemetrygen
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: telemetrygen
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: telemetrygen
+          image: ghcr.io/open-telemetry/opentelemetry-collector-contrib/telemetrygen:latest
+          args:
+            - traces
+            - --otlp-insecure
+            - --otlp-endpoint=otel-agent:4317
+            - --service=checkout
+            - --traces=20

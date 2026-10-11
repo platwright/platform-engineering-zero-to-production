@@ -1,0 +1,30 @@
+# Require ownership labels.
+# Every pod must carry an owning-team label and a standard app name so the platform
+# can attribute cost, route alerts, and answer "who owns this?" (ties to the labels
+# enforced by Project 1). Ships in Audit; the lab patches it to Enforce.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-labels
+  annotations:
+    policies.kyverno.io/title: Require Ownership Labels
+    policies.kyverno.io/category: Governance
+    policies.kyverno.io/description: >-
+      Requires the 'team' and 'app.kubernetes.io/name' labels on all pods.
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: check-ownership-labels
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: "The labels 'team' and 'app.kubernetes.io/name' are required."
+        pattern:
+          metadata:
+            labels:
+              team: "?*"
+              app.kubernetes.io/name: "?*"

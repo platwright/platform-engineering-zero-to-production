@@ -1,0 +1,12 @@
+# kind cluster config for the Cilium zero-trust lab.
+# Disables the default CNI (kindnet) so Cilium can own the dataplane and run the
+# L7 proxy that enforces HTTP-aware policy. kube-proxy is left in place for
+# simplicity; Cilium can also replace it (kubeProxyReplacement) in production.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  disableDefaultCNI: true
+  podSubnet: "10.244.0.0/16"
+nodes:
+  - role: control-plane
+  - role: worker

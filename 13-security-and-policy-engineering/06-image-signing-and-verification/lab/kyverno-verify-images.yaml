@@ -1,0 +1,54 @@
+# Kyverno verifyImages — only admit images that carry a valid Cosign signature.
+#
+# This is the LOCAL-KEY variant for the lab. The __COSIGN_PUB__ placeholder is
+# replaced with your real cosign.pub by inject-key.py (producing
+# verify-images.enforced.yaml). For PRODUCTION, prefer the keyless block at the
+# bottom (commented), which mirrors Project 2's Pass-2 policy: it pins a CI OIDC
+# identity instead of trusting a stored key.
+#
+# Requires Kyverno installed in the cluster.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-image-signatures
+  annotations:
+    policies.kyverno.io/title: Verify Image Signatures
+    policies.kyverno.io/category: Supply Chain
+    policies.kyverno.io/description: >-
+      Only ttl.sh images carrying a valid Cosign signature for the lab key may run.
+spec:
+  validationFailureAction: Enforce
+  webhookTimeoutSeconds: 30
+  failurePolicy: Fail
+  background: false
+  rules:
+    - name: verify-ttl-sh-signature
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      verifyImages:
+        - imageReferences:
+            - "ttl.sh/*"
+          mutateDigest: true
+          verifyDigest: true
+          required: true
+          attestors:
+            - count: 1
+              entries:
+                - keys:
+                    publicKeys: |-
+                      __COSIGN_PUB__
+# ---------------------------------------------------------------------------
+# PRODUCTION (keyless) VARIANT — pin your CI identity, not a stored key.
+# Replace the `keys` entry above with:
+#
+#                - keyless:
+#                    issuer: "https://token.actions.githubusercontent.com"
+#                    subject: "https://github.com/org/*"
+#                    rekor:
+#                      url: https://rekor.sigstore.dev
+#
+# and change imageReferences to your registry (e.g. "ghcr.io/org/*").
+# ---------------------------------------------------------------------------

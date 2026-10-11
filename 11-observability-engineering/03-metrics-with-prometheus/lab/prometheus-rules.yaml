@@ -1,0 +1,39 @@
+# Recording rules pre-compute expensive/frequent expressions on a schedule and
+# store the result as a NEW series, so dashboards and SLO alerts read a cheap
+# pre-computed value instead of re-running the heavy query every refresh.
+#
+# The `release: kube-prom-stack` label makes this stack's Prometheus load the rule.
+# Naming convention: level:metric:operation (e.g. job:http_requests:rate5m).
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: platform-red-rules
+  labels:
+    release: kube-prom-stack
+spec:
+  groups:
+    - name: http-red.rules
+      rules:
+        - record: job:http_requests:rate5m
+          expr: sum by (job) (rate(http_requests_total[5m]))
+        - record: job:http_request_errors:ratio_rate5m
+          expr: |
+            sum by (job) (rate(http_requests_total{code=~"4..|5.."}[5m]))
+              /
+            sum by (job) (rate(http_requests_total[5m]))
+    - name: namespace-cpu.rules
+      rules:
+        - record: namespace:container_cpu_usage:rate5m
+          expr: sum by (namespace) (rate(container_cpu_usage_seconds_total[5m]))
+
+    # Stretch goal: uncomment to alert when the error ratio stays high for 5m.
+    # - name: http-red.alerts
+    #   rules:
+    #     - alert: HighErrorRatio
+    #       expr: job:http_request_errors:ratio_rate5m > 0.1
+    #       for: 5m
+    #       labels:
+    #         severity: warning
+    #       annotations:
+    #         summary: "High HTTP error ratio for job {{ $labels.job }}"
+    #         runbook_url: "https://runbooks.example.com/high-error-ratio"

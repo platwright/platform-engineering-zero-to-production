@@ -1,0 +1,29 @@
+# Tempo Helm values — single-binary, filesystem storage, laptop-sized. Production uses
+# object storage (GCS) and the distributed mode — see architecture.md and ADR-011.
+#
+# helm repo add grafana https://grafana.github.io/helm-charts
+# helm install tempo grafana/tempo -n observability -f tempo-values.yaml
+tempo:
+  storage:
+    trace:
+      backend: local
+      local:
+        path: /var/tempo/traces
+  # Accept OTLP from the collector gateway.
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+  # Generate span metrics + a service graph for trace-to-metrics correlation.
+  metricsGenerator:
+    enabled: true
+    remoteWriteUrl: http://prometheus-operated.observability.svc:9090/api/v1/write
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 512Mi

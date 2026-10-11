@@ -1,0 +1,47 @@
+# OTel Collector Helm values — installs BOTH roles (run the chart twice, once per
+# mode) OR use these as two value files. See ADR-017 for the topology.
+#
+# helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+#
+# Gateway (Deployment):
+#   helm install otel-gateway open-telemetry/opentelemetry-collector \
+#     -n observability -f otel-values.yaml --set mode=deployment
+# Agent (DaemonSet):
+#   helm install otel-agent open-telemetry/opentelemetry-collector \
+#     -n observability -f otel-values.yaml --set mode=daemonset
+#
+# The authoritative pipeline configs live next to this file:
+#   gateway-config.yaml (tail sampling + fan-out) and agent-config.yaml (host/logs).
+mode: deployment # override to daemonset for the agent
+image:
+  repository: otel/opentelemetry-collector-contrib # contrib has tail_sampling + k8sattributes
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 512Mi
+# The real pipeline is supplied via the config/ConfigMaps in this directory; this
+# block is a minimal fallback so the chart is valid on its own.
+config:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+  processors:
+    batch: {}
+  exporters:
+    debug: {}
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [debug]
+      metrics:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [debug]

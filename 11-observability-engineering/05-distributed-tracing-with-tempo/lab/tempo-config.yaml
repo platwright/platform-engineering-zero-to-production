@@ -1,0 +1,33 @@
+# Minimal single-binary Tempo for the lab. Receives OTLP, stores traces on local
+# disk (ephemeral -- under /tmp so no volume permissions to fight), serves the
+# query API on :3200 for Grafana. Not a production layout (see the lesson).
+
+server:
+  http_listen_port: 3200
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318 # the generator POSTs OTLP/JSON here (/v1/traces)
+
+ingester:
+  max_block_duration: 5m # flush quickly so traces are searchable in the lab
+
+compactor:
+  compaction:
+    block_retention: 1h
+
+storage:
+  trace:
+    backend: local
+    wal:
+      path: /tmp/tempo/wal
+    local:
+      path: /tmp/tempo/blocks
+
+usage_report:
+  reporting_enabled: false

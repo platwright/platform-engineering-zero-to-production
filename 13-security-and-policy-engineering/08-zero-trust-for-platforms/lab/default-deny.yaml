@@ -1,0 +1,15 @@
+# Default-deny ingress for the zt-demo namespace — the explicit zero-trust default.
+# This is a standard Kubernetes NetworkPolicy (Cilium enforces these too). A
+# podSelector of {} with policyTypes: [Ingress] and NO ingress rules denies all
+# inbound traffic to every pod in the namespace until another policy allows
+# specific calls back in. The L7 policy then re-allows exactly frontend -> backend
+# GET /api/*.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: zt-demo
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress

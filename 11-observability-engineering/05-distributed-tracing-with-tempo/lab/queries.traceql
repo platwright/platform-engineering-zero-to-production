@@ -1,0 +1,24 @@
+// TraceQL cheat sheet for this lab. Paste into Grafana Explore (Tempo data source,
+// query type: TraceQL). You select SPANS with { ... }; Tempo returns the TRACES
+// that contain matching spans.
+
+// All traces that touch the checkout service
+{ resource.service.name = "checkout" }
+
+// Slow traces (any span longer than the threshold)
+{ duration > 300ms }
+
+// Failed traces (span status is error)
+{ status = error }
+
+// Server errors on checkout: combine a resource attr and a span attr
+{ resource.service.name = "checkout" && span.http.status_code >= 500 }
+
+// A specific downstream dependency by span name
+{ name = "charge-card" }
+
+// Database spans only
+{ span.db.system = "postgresql" }
+
+// Combine conditions: slow AND errored
+{ duration > 300ms && status = error }

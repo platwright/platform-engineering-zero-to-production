@@ -1,0 +1,37 @@
+# A Sloth SLO definition (Kubernetes CRD form), faithful to the course outline.
+# One small spec -> `sloth generate` expands it into a full PrometheusRule with SLI
+# recording rules at every window plus multi-window, multi-burn-rate page/ticket
+# alerts. The {{.window}} placeholder is filled in by Sloth for each window.
+#
+#   docker run --rm -v "${PWD}:/data" ghcr.io/slok/sloth:v0.16.0 \
+#     generate -i /data/argocd-api-slo.yaml -o /data/argocd-api-rules.yaml
+apiVersion: sloth.slok.dev/v1
+kind: PrometheusServiceLevel
+metadata:
+  name: argocd-api
+  namespace: monitoring
+spec:
+  service: argocd
+  labels:
+    team: platform
+  slos:
+    - name: availability
+      objective: 99.9 # 0.1% error budget over the period
+      description: "Argo CD application syncs succeed."
+      sli:
+        events:
+          error_query: sum(rate(argocd_app_sync_total{phase="Error"}[{{.window}}]))
+          total_query: sum(rate(argocd_app_sync_total[{{.window}}]))
+      alerting:
+        name: ArgoCdApiHighErrorRate
+        labels:
+          category: availability
+        annotations:
+          summary: "Argo CD sync error budget is burning too fast"
+          runbook_url: "https://runbooks.example.com/argocd-availability"
+        page_alert:
+          labels:
+            severity: page
+        ticket_alert:
+          labels:
+            severity: ticket

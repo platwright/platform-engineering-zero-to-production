@@ -1,0 +1,66 @@
+# OpenTelemetry Collector -- AGENT role (a per-node DaemonSet).
+#
+# The agent runs on every node. It scrapes node-level `hostmetrics` and receives
+# OTLP from workloads scheduled on its node, then FORWARDS everything to the
+# gateway Service. No sampling or backend routing happens here -- the agent stays
+# cheap and close to the source.
+#
+# Install:
+#   helm install otel-agent open-telemetry/opentelemetry-collector \
+#     --version 0.108.0 -f agent-values.yaml
+
+mode: daemonset
+fullnameOverride: otel-agent
+
+image:
+  repository: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s
+command:
+  name: otelcol-k8s
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 512Mi
+
+config:
+  receivers:
+    jaeger: null
+    zipkin: null
+    prometheus: null
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+    hostmetrics: # node-level USE signals, collected once per node by the DaemonSet
+      collection_interval: 15s
+      scrapers:
+        cpu: {}
+        load: {}
+        memory: {}
+  processors:
+    memory_limiter:
+      check_interval: 1s
+      limit_percentage: 80
+      spike_limit_percentage: 25
+    batch: {}
+  exporters:
+    otlp: # forward to the gateway Service (insecure OTLP is fine on a lab cluster)
+      endpoint: otel-gateway:4317
+      tls:
+        insecure: true
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [otlp]
+      metrics:
+        receivers: [otlp, hostmetrics]
+        processors: [memory_limiter, batch]
+        exporters: [otlp]
+      logs:
+        receivers: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [otlp]

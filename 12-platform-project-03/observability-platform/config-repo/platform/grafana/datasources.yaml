@@ -1,0 +1,42 @@
+# Grafana datasources, provisioned as code (not clicked in the UI). Grafana loads
+# these on start so metrics, logs, and traces are all queryable — and correlated:
+# a trace in Tempo links to its logs in Loki, and metrics exemplars link to traces.
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    uid: prometheus
+    url: http://prometheus-operated.observability.svc:9090
+    isDefault: true
+    jsonData:
+      # Exemplars: jump from a metric data point to the trace that produced it.
+      exemplarTraceIdDestinations:
+        - name: trace_id
+          datasourceUid: tempo
+
+  - name: Loki
+    type: loki
+    access: proxy
+    uid: loki
+    url: http://loki.observability.svc:3100
+    jsonData:
+      # Trace-to-logs: a "trace_id" field in logs links to Tempo.
+      derivedFields:
+        - name: trace_id
+          matcherRegex: "trace_id=(\\w+)"
+          url: "$${__value.raw}"
+          datasourceUid: tempo
+
+  - name: Tempo
+    type: tempo
+    access: proxy
+    uid: tempo
+    url: http://tempo.observability.svc:3100
+    jsonData:
+      # Trace-to-logs correlation back into Loki.
+      tracesToLogsV2:
+        datasourceUid: loki
+      # Service graph / span metrics from Prometheus.
+      tracesToMetrics:
+        datasourceUid: prometheus

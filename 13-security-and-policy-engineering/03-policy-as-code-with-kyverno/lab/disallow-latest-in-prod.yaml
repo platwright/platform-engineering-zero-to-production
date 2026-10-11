@@ -1,0 +1,47 @@
+# Disallow the ':latest' tag (and untagged images) in production.
+# Applies ONLY to namespaces labelled env=production. A mutable ':latest' tag means
+# you cannot reproduce or roll back what ran; production must use an immutable tag
+# (ideally a digest). Ships in Audit; the lab patches it to Enforce.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-latest-in-prod
+  annotations:
+    policies.kyverno.io/title: Disallow Latest Tag In Production
+    policies.kyverno.io/category: Supply Chain
+    policies.kyverno.io/description: >-
+      Blocks :latest and untagged images in namespaces labelled env=production.
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: forbid-latest-tag
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaceSelector:
+                matchLabels:
+                  env: production
+      validate:
+        message: "Using ':latest' is not allowed in production; pin an immutable tag."
+        pattern:
+          spec:
+            containers:
+              - image: "!*:latest"
+    - name: require-image-tag
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaceSelector:
+                matchLabels:
+                  env: production
+      validate:
+        message: "An explicit image tag is required in production (untagged implies :latest)."
+        pattern:
+          spec:
+            containers:
+              - image: "*:*"

@@ -1,0 +1,13 @@
+# Tells Grafana to load dashboards from a directory (provisioned as code). In the
+# Helm install, the dashboards/ JSON files are mounted here via a ConfigMap, so the
+# Platform Overview Dashboard is versioned in Git, not hand-exported.
+apiVersion: 1
+providers:
+  - name: platform-dashboards
+    orgId: 1
+    folder: Platform
+    type: file
+    disableDeletion: true
+    editable: false
+    options:
+      path: /var/lib/grafana/dashboards/platform

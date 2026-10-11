@@ -1,0 +1,12 @@
+# NON-COMPLIANT pod — deliberately violates the baseline, for the lab.
+# Violations: runs as root (no securityContext), no resource requests/limits,
+# and no ownership labels. In Audit mode it is admitted but reported; in Enforce
+# mode it is rejected at admission.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod
+spec:
+  containers:
+    - name: app
+      image: nginx:latest

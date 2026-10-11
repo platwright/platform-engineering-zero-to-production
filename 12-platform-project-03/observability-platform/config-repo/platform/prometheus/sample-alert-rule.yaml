@@ -1,0 +1,29 @@
+# A simple hand-written PrometheusRule you can apply in Pass 1 to SEE an alert fire
+# without the full Sloth pipeline. It alerts when a sample service's 5xx error ratio
+# exceeds 5% over 5 minutes. (Sloth's generated burn-rate rules are the production
+# approach — see ../slos/argocd-slo.yaml.)
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: sample-service-error-rate
+  namespace: observability
+  labels:
+    release: kube-prometheus-stack # so the Prometheus Operator picks it up
+spec:
+  groups:
+    - name: sample-service.rules
+      rules:
+        - alert: SampleServiceHighErrorRate
+          expr: |
+            sum(rate(http_requests_total{job="sample-app",status=~"5.."}[5m]))
+              /
+            sum(rate(http_requests_total{job="sample-app"}[5m]))
+              > 0.05
+          for: 2m
+          labels:
+            severity: page
+            category: platform
+          annotations:
+            summary: "sample-app 5xx error ratio above 5%"
+            description: "The sample app is returning too many 5xx responses."
+            runbook_url: "https://github.com/your-org/platform/blob/main/runbooks/high-error-rate.md"

@@ -1,0 +1,36 @@
+-- PromQL cheat sheet for this lab. Paste any block into the Prometheus Graph tab
+-- (http://localhost:9090/graph). The ".." in {code=~"5.."} is a regex, not a range.
+
+-- ========== RED: the service ==========
+
+-- Total request rate (requests/sec), summed across instances
+sum(rate(http_requests_total[5m]))
+
+-- Error RATIO. This app returns 404 on /err, so errors are 4xx+5xx here.
+-- The canonical "server errors only" form is {code=~"5.."}.
+sum(rate(http_requests_total{code=~"4..|5.."}[5m]))
+  /
+sum(rate(http_requests_total[5m]))
+
+-- p99 request latency across ALL instances: aggregate bucket rates by `le`
+-- FIRST, then take the quantile. (p50/p95 by changing the first argument.)
+histogram_quantile(0.99, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))
+histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))
+histogram_quantile(0.50, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))
+
+-- ========== USE: the cluster ==========
+
+-- CPU usage by namespace (cores), from cAdvisor's container_cpu_usage_seconds_total
+sum by (namespace) (rate(container_cpu_usage_seconds_total[5m]))
+
+-- Memory working set by namespace (bytes)
+sum by (namespace) (container_memory_working_set_bytes)
+
+-- Is the sample app being scraped? 1 = up, 0 = down.
+up{job="prometheus-example-app"}
+
+-- ========== Recorded series (after applying prometheus-rules.yaml) ==========
+
+-- Cheap, instant: the heavy expression already ran on a schedule.
+job:http_request_errors:ratio_rate5m
+namespace:container_cpu_usage:rate5m
