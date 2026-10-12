@@ -1,0 +1,34 @@
+# ILLUSTRATIVE ONLY — DO NOT APPLY in this lab.
+#
+# This shows what cross-cluster service discovery looks like with Cilium Cluster Mesh.
+# Once two clusters run Cilium and are meshed (cilium clustermesh connect), a Service that
+# exists in BOTH clusters can be promoted to a GLOBAL service: Cilium load-balances across
+# the clusters and fails traffic over automatically if one cluster's backends go away.
+#
+# You cannot run this on a single-host kind lab — Cluster Mesh needs real inter-cluster
+# pod networking and the Cilium CNI installed with cluster-mesh enabled. It is here so you
+# can see how LITTLE you add to a Service to make it span clusters — and to anchor the
+# lesson's warning: adopt this only when you can name the need (active-active data locality,
+# migration, a genuinely global service). Synchronous cross-cluster calls couple failure
+# domains; prefer sharing data asynchronously.
+#
+# Reference: https://docs.cilium.io/en/stable/network/clustermesh/services/
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments
+  namespace: payments
+  annotations:
+    # Promote this Service to a global, cross-cluster service.
+    service.cilium.io/global: "true"
+    # Optional: also send traffic to remote endpoints even when local ones are healthy
+    # (active-active). Omit or set "false" for local-first with remote failover only.
+    service.cilium.io/affinity: "none"
+spec:
+  type: ClusterIP
+  selector:
+    app: payments
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

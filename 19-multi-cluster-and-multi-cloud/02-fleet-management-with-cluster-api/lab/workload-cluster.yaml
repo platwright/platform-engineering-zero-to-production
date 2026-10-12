@@ -1,0 +1,36 @@
+# A minimal WORKLOAD CLUSTER defined entirely by a topology that references the
+# `quick-start` ClusterClass (created for you by `clusterctl generate cluster --flavor
+# development`, and mirrored in clusterclass.yaml). This is the whole definition of a
+# cluster: pick the class, the version, and the machine counts.
+#
+# Apply this AFTER the quick-start ClusterClass exists in the management cluster (it does
+# once you have applied the clusterctl-generated pe-dev.yaml). It stamps a SECOND, separate
+# cluster from the same template — the reproducibility payoff of ClusterClass.
+#
+#   kubectl apply -f workload-cluster.yaml
+#
+# Clusters as cattle: this entire file is a cluster, created and reconciled by a controller.
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: team-a-prod
+  labels:
+    cni: calico                # a ClusterResourceSet could match this label to auto-install a CNI
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - 192.168.0.0/16
+    services:
+      cidrBlocks:
+        - 10.128.0.0/12
+  topology:
+    class: quick-start         # the ClusterClass authored once (see clusterclass.yaml)
+    version: v1.31.2
+    controlPlane:
+      replicas: 1
+    workers:
+      machineDeployments:
+        - class: default-worker
+          name: md-0
+          replicas: 2

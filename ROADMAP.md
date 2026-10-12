@@ -11,10 +11,11 @@ is developed in the open, so each module is marked with its current status.
 | 🚧 | In progress / scaffolded — outline exists, content being written |
 | 🗓️ | Planned — not yet started |
 
-> **Current state:** Modules **00–18 are complete** — Orientation through Developer
-> Experience & IDP, plus Project 4 (the Internal Developer Platform), Platform SRE,
-> and FinOps and Cost Engineering. Phases 19 and beyond are scaffolded and in
-> progress. Want to help? See [CONTRIBUTING.md](./CONTRIBUTING.md).
+> **Current state:** Modules **00–21 are complete** — the entire core curriculum
+> (Orientation through Advanced Platform Topics), all four platform projects, and the
+> four capstone briefs. The remaining work is the reference material: interview
+> preparation (`22`) and cheat sheets (`23`). Want to help? See
+> [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
@@ -200,25 +201,30 @@ is developed in the open, so each module is marked with its current status.
 
 ### Phase 15 — Multi-Cluster and Multi-Cloud
 
-- 🚧 **[19 · Multi-Cluster and Multi-Cloud](./19-multi-cluster-and-multi-cloud/)**
-  - Multi-cluster architecture · fleet management with Cluster API ·
-    multi-cloud patterns · global load balancing & edge
+- ✅ **[19 · Multi-Cluster and Multi-Cloud](./19-multi-cluster-and-multi-cloud/)**
+  - [01 · Multi-Cluster Architecture](./19-multi-cluster-and-multi-cloud/01-multi-cluster-architecture/)
+  - [02 · Fleet Management with Cluster API](./19-multi-cluster-and-multi-cloud/02-fleet-management-with-cluster-api/)
+  - [03 · Multi-Cloud Platform Patterns](./19-multi-cluster-and-multi-cloud/03-multi-cloud-platform-patterns/)
+  - [04 · Global Load Balancing and Edge](./19-multi-cluster-and-multi-cloud/04-global-load-balancing-and-edge/)
 
 ### Phase 16 — Advanced Platform Topics
 
-- 🚧 **[20 · Advanced Platform Topics](./20-advanced-platform-topics/)**
-  - Platform maturity model · AI-assisted platform engineering ·
-    platform metrics · platform culture
+- ✅ **[20 · Advanced Platform Topics](./20-advanced-platform-topics/)**
+  - [01 · Platform Engineering Maturity Model](./20-advanced-platform-topics/01-platform-engineering-maturity-model/)
+  - [02 · AI-Assisted Platform Engineering](./20-advanced-platform-topics/02-ai-assisted-platform-engineering/)
+  - [03 · Platform Engineering Metrics](./20-advanced-platform-topics/03-platform-engineering-metrics/)
+  - [04 · Platform Engineering Culture and Organization](./20-advanced-platform-topics/04-platform-engineering-culture/)
 
 ---
 
 ## Capstone projects
 
-- 🚧 **[21 · Capstone Projects](./21-capstone-projects/)**
-  1. Production Kubernetes Platform
-  2. Full IDP with Backstage
-  3. Multi-Cluster GitOps Platform
-  4. Production Platform Reference Architecture
+- ✅ **[21 · Capstone Projects](./21-capstone-projects/)**
+  1. [Production Kubernetes Platform](./21-capstone-projects/01-production-kubernetes-platform/)
+  2. [Full IDP with Backstage](./21-capstone-projects/02-full-idp-with-backstage/)
+  3. [Multi-Cluster GitOps Platform](./21-capstone-projects/03-multi-cluster-gitops-platform/)
+  4. [Production Platform Reference Architecture](./21-capstone-projects/04-production-platform-reference-architecture/)
+  - [Portfolio standard](./21-capstone-projects/portfolio-standard.md) · [Production readiness checklist](./21-capstone-projects/production-readiness-checklist.md)
 
 ## Reference material
 

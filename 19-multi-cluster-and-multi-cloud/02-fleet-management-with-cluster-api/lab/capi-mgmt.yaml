@@ -1,0 +1,14 @@
+# The Cluster API MANAGEMENT cluster.
+# CAPD (the Docker infrastructure provider) builds workload-cluster nodes as Docker
+# containers on your host, so the management cluster must be able to reach the host's
+# Docker socket — that is why we mount it here.
+#
+# Create with: kind create cluster --name capi-mgmt --config capi-mgmt.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: capi-mgmt
+nodes:
+  - role: control-plane
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock

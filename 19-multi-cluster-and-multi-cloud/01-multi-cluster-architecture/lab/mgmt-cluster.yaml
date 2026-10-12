@@ -1,0 +1,7 @@
+# The management/hub cluster — runs ArgoCD and drives the fleet.
+# Create with: kind create cluster --name pe-mgmt --config mgmt-cluster.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: pe-mgmt
+nodes:
+  - role: control-plane

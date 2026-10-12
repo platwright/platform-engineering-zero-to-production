@@ -1,0 +1,36 @@
+# A label-targeted ApplicationSet. Unlike Module 10.5's `clusters: {}` (which deploys to
+# EVERY registered cluster), the cluster generator here carries a SELECTOR, so it targets
+# only the segment whose clusters are labelled environment=prod. The destination namespace
+# is derived from the cluster's own labels, so each segment gets per-segment placement.
+#
+# Apply on the management cluster:
+#   kubectl --context kind-pe-mgmt apply -f applicationset-by-label.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: web-prod
+  namespace: argocd
+spec:
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            environment: prod        # ONLY clusters registered with environment=prod
+  template:
+    metadata:
+      name: 'web-{{name}}'           # e.g. web-pe-prod-eu
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps
+        targetRevision: HEAD
+        path: guestbook
+      destination:
+        server: '{{server}}'
+        namespace: 'web-{{metadata.labels.environment}}'   # per-segment namespace: web-prod
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

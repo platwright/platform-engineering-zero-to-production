@@ -1,0 +1,46 @@
+# SKETCH / ILLUSTRATIVE — the second Composition backing the SAME XObjectStorage XRD, on
+# GCP with a GCS bucket (Upbound provider-gcp). Patches are simplified for teaching; modern
+# Crossplane prefers composition functions. Do not treat this as apply-ready.
+#
+# LEAK-AUDIT HINTS (compare with the AWS version): GCS versioning is an INLINE field on the
+# bucket (not a separate resource); access control is uniform bucket-level IAM (not a
+# separate public-access-block + per-object ACLs); location/storage-class names differ from
+# AWS; GCS names are globally unique with different charset rules. Every one of these is a
+# place the "one portable API" has to hide or expose a cloud difference.
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: objectstorage-gcp
+  labels:
+    provider: gcp
+spec:
+  compositeTypeRef:
+    apiVersion: platform.example.org/v1alpha1
+    kind: XObjectStorage
+  resources:
+    - name: gcs-bucket
+      base:
+        apiVersion: storage.gcp.upbound.io/v1beta1
+        kind: Bucket
+        spec:
+          forProvider:
+            location: US                    # patched from spec.region via a region map
+            uniformBucketLevelAccess: true  # GCP's single access model — no separate resource
+            versioning:
+              - enabled: false              # INLINE here; on AWS this was a whole resource
+      patches:
+        - fromFieldPath: spec.region
+          toFieldPath: spec.forProvider.location
+          transforms:
+            - type: map
+              map:
+                # The XRD's portable region hint maps to DIFFERENT names per cloud — a leak
+                # the Composition must absorb.
+                us-east-1: US
+                eu-west-1: EU
+        - fromFieldPath: spec.versioned
+          toFieldPath: spec.forProvider.versioning[0].enabled
+        - fromFieldPath: metadata.uid
+          toFieldPath: status.bucketName
+          policy:
+            fromFieldPath: Optional

@@ -1,0 +1,83 @@
+# OPTIONAL CLOUD REFERENCE — DO NOT APPLY in the free local lab.
+#
+# This is the SAME top-level Cluster contract as the Docker lab, retargeted at GKE via the
+# Cluster API Provider GCP (CAPG). Notice that only the infrastructure and control-plane
+# refs change (GCPManagedCluster + GKEManagedControlPlane instead of DockerCluster +
+# KubeadmControlPlane) — the workflow, upgrade mechanics, and `kubectl apply` lifecycle are
+# identical. That portability is the whole point of Cluster API.
+#
+# TO ACTUALLY RUN THIS (costs money, needs accounts):
+#   - A GCP project with billing enabled and the GKE + Compute APIs turned on.
+#   - `clusterctl init --infrastructure gcp` on a management cluster.
+#   - GCP credentials exported for CAPG (a service account with the documented roles).
+#   - Delete the cluster immediately after to avoid ongoing GKE + node-pool charges.
+# See: https://cluster-api-gcp.sigs.k8s.io/
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: team-a-production
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - 192.168.0.0/16
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: GKEManagedControlPlane
+    name: team-a-production
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: GCPManagedCluster
+    name: team-a-production
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPManagedCluster
+metadata:
+  name: team-a-production
+  namespace: default
+spec:
+  project: my-gcp-project          # replace with your project ID
+  region: europe-west1
+  network:
+    name: default
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: GKEManagedControlPlane
+metadata:
+  name: team-a-production
+  namespace: default
+spec:
+  location: europe-west1
+  releaseChannel: regular
+---
+# A provider-managed, auto-scaling node group (the CAPI MachinePool abstraction).
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachinePool
+metadata:
+  name: team-a-production-pool
+  namespace: default
+spec:
+  clusterName: team-a-production
+  replicas: 3
+  template:
+    spec:
+      clusterName: team-a-production
+      bootstrap:
+        dataSecretName: ""
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: GCPManagedMachinePool
+        name: team-a-production-pool
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPManagedMachinePool
+metadata:
+  name: team-a-production-pool
+  namespace: default
+spec:
+  nodePoolName: default-pool
+  scaling:
+    minCount: 1
+    maxCount: 5                     # auto-scaling node group: CAPI manages the GKE node pool

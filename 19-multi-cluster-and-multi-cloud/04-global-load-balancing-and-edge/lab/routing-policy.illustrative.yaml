@@ -1,0 +1,46 @@
+# ILLUSTRATIVE — provider-agnostic SHAPE of a global routing policy. This is not a real
+# product's config (GCP, AWS Route 53 / Global Accelerator, and Cloudflare each have their
+# own schema); it exists so you can see the moving parts and design your own in the
+# worksheet. Do not apply it anywhere.
+#
+# The active-active vs active-passive difference shows up as EQUAL vs TIERED priorities.
+record: app.example.com
+
+# How users are mapped to a region:
+routing:
+  type: latency          # latency | geo | weighted | failover
+  mechanism: anycast     # anycast (one global IP, seconds-fast failover) | dns (TTL-bound)
+  dnsTtlSeconds: 30      # only relevant when mechanism=dns; bounds failover speed
+
+# The deep health check every region must pass to stay in rotation. A SHALLOW check that
+# only hits the load balancer proves nothing — exercise the real dependencies.
+healthCheck:
+  path: /healthz             # returns 200 only if THIS region can serve (app + datastore)
+  intervalSeconds: 10
+  unhealthyThreshold: 3      # consecutive failures before the region is removed
+  healthyThreshold: 3        # consecutive successes before it re-enters (anti-flap)
+
+# ACTIVE-ACTIVE: equal priority — both regions serve; a dead one is simply dropped.
+regions:
+  - name: eu-west
+    backend: lb-eu
+    priority: 1
+    geo: [EU]                # optional residency hint: keep EU users in EU
+  - name: us-east
+    backend: lb-us
+    priority: 1
+    geo: [NA]
+
+# ACTIVE-PASSIVE alternative: make the standby a HIGHER number so it is used only when the
+# primary is unhealthy. Uncomment to compare.
+# regions:
+#   - name: eu-west
+#     backend: lb-eu
+#     priority: 1            # primary
+#   - name: us-east
+#     backend: lb-us
+#     priority: 2            # standby — promoted/served only when eu-west is unhealthy
+
+# Reminder: routing is the easy half. The data layer under these regions (multi-region
+# writes for active-active, or primary + async replica + tested promotion for
+# active-passive) is what actually determines your RTO and RPO.

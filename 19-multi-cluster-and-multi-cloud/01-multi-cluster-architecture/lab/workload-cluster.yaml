@@ -1,0 +1,7 @@
+# A workload cluster — represents one segment (labelled prod / eu at registration time).
+# Create with: kind create cluster --name pe-prod-eu --config workload-cluster.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: pe-prod-eu
+nodes:
+  - role: control-plane

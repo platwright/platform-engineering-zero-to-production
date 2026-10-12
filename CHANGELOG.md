@@ -10,9 +10,36 @@ curriculum progress. See the [ROADMAP](./ROADMAP.md) for the full plan and statu
 
 ### Planned
 
-- Phase 15 — Multi-Cluster and Multi-Cloud (module `19`).
-- Phase 16 — Advanced Platform Topics (module `20`).
-- Capstones and reference material per the [ROADMAP](./ROADMAP.md).
+- Interview preparation (module `22`).
+- Cheat sheets (module `23`).
+
+## [0.7.0] — 2026-10-12
+
+Scale, the organizational capstone, and the portfolio capstones.
+
+### Added
+
+- **Module 19 — Multi-Cluster and Multi-Cloud** (complete) — 4 submodules + labs:
+  multi-cluster architecture (management-cluster pattern, cross-cluster service
+  discovery), fleet management with Cluster API, multi-cloud platform patterns
+  (Crossplane abstraction, honest "usually more expensive" framing), and global load
+  balancing & edge. Local kind/CAPD labs plus cloud-optional starters.
+- **Module 20 — Advanced Platform Topics** (complete) — 4 submodules + labs: the
+  platform engineering maturity model (5 levels), AI-assisted platform engineering
+  (with a firm "AI assists, doesn't replace judgment" stance), platform engineering
+  metrics (DORA/SPACE/adoption + a health dashboard), and platform engineering culture
+  & organization. Closes the loop with Phase 1.
+- **Capstones (module 21)** (complete) — the four portfolio-grade capstone briefs
+  (Production Kubernetes Platform, Full IDP with Backstage, Multi-Cluster GitOps
+  Platform, and the Production Platform Reference Architecture), each tying its
+  requirements back to the modules and ADRs that taught them, plus a **portfolio
+  standard** and a **production readiness checklist** reference.
+
+### Changed
+
+- `ROADMAP.md` updated: modules `19`–`21` marked complete with per-submodule links.
+  The core curriculum (00–21) is now complete; only the reference material (22–23)
+  remains.
 
 ## [0.6.0] — 2026-10-11
 
@@ -202,7 +229,8 @@ The foundation release: repository scaffolding plus the first two modules.
   - `05` Platform Team Topology
   - Each with a full lesson and a hands-on lab.
 
-[Unreleased]: ../../compare/v0.6.0...HEAD
+[Unreleased]: ../../compare/v0.7.0...HEAD
+[0.7.0]: ../../releases/tag/v0.7.0
 [0.6.0]: ../../releases/tag/v0.6.0
 [0.5.0]: ../../releases/tag/v0.5.0
 [0.4.0]: ../../releases/tag/v0.4.0

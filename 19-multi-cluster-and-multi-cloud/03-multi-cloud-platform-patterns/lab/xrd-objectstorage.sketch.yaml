@@ -1,0 +1,46 @@
+# SKETCH / ILLUSTRATIVE — read this to understand the multi-cloud abstraction; it is not a
+# complete, apply-ready manifest. This is the ONE developer-facing API that both clouds
+# present. A developer creates an `ObjectBucket` claim; the platform's Composition (AWS or
+# GCP) decides what actually gets built. Nothing here names a cloud — that is the point.
+#
+# Builds directly on Module 05.6 (Crossplane): an XRD defines a new API; a Composition
+# implements it. See composition-aws-s3.sketch.yaml and composition-gcp-gcs.sketch.yaml.
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xobjectstorages.platform.example.org
+spec:
+  group: platform.example.org
+  names:
+    kind: XObjectStorage
+    plural: xobjectstorages
+  claimNames:
+    kind: ObjectBucket          # the namespaced, developer-facing handle
+    plural: objectbuckets
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                # Deliberately tiny: only what BOTH clouds can honour portably.
+                versioned:
+                  type: boolean
+                  description: Keep non-current object versions.
+                  default: false
+                region:
+                  type: string
+                  description: A portable region HINT; each Composition maps it to a real region.
+              required:
+                - region
+            status:
+              type: object
+              properties:
+                bucketName:
+                  type: string
+                  description: The provider-assigned bucket name.

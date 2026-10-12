@@ -236,10 +236,11 @@ platform-engineering-from-zero-to-production/
 
 The complete module tree lives in the [ROADMAP](./ROADMAP.md#full-curriculum).
 
-> **Status:** This repository is being built in the open. **Module 00 (Orientation)**
-> and **Module 01 (Platform Foundations)** are complete. The remaining modules are
-> scaffolded and in progress — track them in the [ROADMAP](./ROADMAP.md) and
-> [CHANGELOG](./CHANGELOG.md).
+> **Status:** This repository is being built in the open. The **entire core
+> curriculum is complete** — all content phases (`00`–`20`), all four platform
+> projects, and the four capstone briefs (`21`). The remaining work is the reference
+> material: interview preparation (`22`) and cheat sheets (`23`). Track progress in the
+> [ROADMAP](./ROADMAP.md) and [CHANGELOG](./CHANGELOG.md).
 
 ---
 
