@@ -64,6 +64,11 @@ you chose.
 > Needs progressive delivery and resilience patterns, apps are partly instrumented with
 > OTel, team is still learning Kubernetes.
 
+## Cleanup
+
+> Nothing to tear down ? this is a design/discovery lab that creates no cloud or
+> cluster resources. Keep your completed deliverable; it's a portfolio artifact.
+
 ## Reflection
 
 - For your scenario, how many requirements were met by Cilium/Gateway API/OTel *before*

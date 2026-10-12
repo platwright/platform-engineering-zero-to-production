@@ -8,7 +8,7 @@
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/Content-CC%20BY--SA%204.0-lightgrey.svg)](./LICENSE)
 [![Code License: MIT](https://img.shields.io/badge/Code-MIT-blue.svg)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
-[![Status: In Progress](https://img.shields.io/badge/status-in%20progress-orange.svg)](./ROADMAP.md)
+[![Status: Complete](https://img.shields.io/badge/status-complete-brightgreen.svg)](./ROADMAP.md)
 
 </div>
 
@@ -236,10 +236,10 @@ platform-engineering-from-zero-to-production/
 
 The complete module tree lives in the [ROADMAP](./ROADMAP.md#full-curriculum).
 
-> **Status:** This repository is being built in the open. The **entire core
-> curriculum is complete** — all content phases (`00`–`20`), all four platform
-> projects, and the four capstone briefs (`21`). The remaining work is the reference
-> material: interview preparation (`22`) and cheat sheets (`23`). Track progress in the
+> **Status:** 🎉 **The course is complete.** Every module is written — the full
+> curriculum (`00`–`20`), all four platform projects, the four capstone briefs (`21`),
+> and the reference material: interview preparation (`22`) and cheat sheets (`23`).
+> Ongoing work is maintenance and community contributions. Track changes in the
 > [ROADMAP](./ROADMAP.md) and [CHANGELOG](./CHANGELOG.md).
 
 ---

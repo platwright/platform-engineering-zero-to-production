@@ -50,6 +50,11 @@ A completed worksheet showing: the full step list, a total time, the wait/active
 breakdown, and three prioritized, *avoidable* frictions with proposed fixes. Someone
 reading it should immediately see where the days go.
 
+## Cleanup
+
+> Nothing to tear down ? this is a design/discovery lab that creates no cloud or
+> cluster resources. Keep your completed deliverable; it's a portfolio artifact.
+
 ## Reflection
 
 - How much of the total was **waiting** vs **active work**? Did that surprise you?

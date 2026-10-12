@@ -10,8 +10,35 @@ curriculum progress. See the [ROADMAP](./ROADMAP.md) for the full plan and statu
 
 ### Planned
 
-- Interview preparation (module `22`).
-- Cheat sheets (module `23`).
+- Ongoing maintenance: new Kubernetes releases and tooling updates, additional
+  diagrams, and community contributions. See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## [1.0.0] — 2026-10-12
+
+🎉 **The course is complete.** This release adds the reference material and a
+repository-wide quality pass, bringing every module (`00`–`23`) to done.
+
+### Added
+
+- **Module 22 — Interview Preparation** (complete) — 11 per-domain question banks
+  with model answers: platform engineering fundamentals, containers & Kubernetes,
+  infrastructure as code, GitOps, observability, security, networking, developer
+  experience, platform SRE, FinOps, and system design. Each question includes "what
+  they're really asking," a concrete model answer, a link to the course module that
+  teaches it, and common red flags.
+- **Module 23 — Cheat Sheets** (complete) — 13 concise quick-reference pages covering
+  all 30 reference topics from the outline: platform overview, Kubernetes, kubectl,
+  Helm/Kustomize, Terraform, GitOps, ArgoCD, observability (PromQL/LogQL/SLO),
+  security (Kyverno/SLSA), networking (Cilium/Gateway API), IDP/Backstage, FinOps, and
+  the maturity model (with production-readiness and CI/CD templates).
+
+### Changed
+
+- **Repository-wide quality audit.** Verified the nine-part arc, navigation, and
+  quality markers across all 99 lesson modules; added a "Cleanup" section to the 6
+  design/discovery labs that create no resources, so all 99 labs are structurally
+  consistent; confirmed all code artifacts build and every internal link resolves.
+- `README.md` and `ROADMAP.md` marked the course complete (status: complete).
 
 ## [0.7.0] — 2026-10-12
 
@@ -229,7 +256,8 @@ The foundation release: repository scaffolding plus the first two modules.
   - `05` Platform Team Topology
   - Each with a full lesson and a hands-on lab.
 
-[Unreleased]: ../../compare/v0.7.0...HEAD
+[Unreleased]: ../../compare/v1.0.0...HEAD
+[1.0.0]: ../../releases/tag/v1.0.0
 [0.7.0]: ../../releases/tag/v0.7.0
 [0.6.0]: ../../releases/tag/v0.6.0
 [0.5.0]: ../../releases/tag/v0.5.0

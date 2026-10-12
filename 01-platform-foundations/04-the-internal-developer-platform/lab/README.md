@@ -49,6 +49,11 @@ A completed assessment: a rating per capability, a five-planes note, the top gap
 and a thin, justified next step. It should read like something you could present to
 an engineering leader to justify the platform team's next quarter.
 
+## Cleanup
+
+> Nothing to tear down ? this is a design/discovery lab that creates no cloud or
+> cluster resources. Keep your completed deliverable; it's a portfolio artifact.
+
 ## Reflection
 
 - How many capabilities were truly **self-service** vs **ticket-driven**? (Most

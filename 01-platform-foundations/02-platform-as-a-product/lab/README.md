@@ -57,6 +57,11 @@ a new team member could read in two minutes and understand *who* it's for, *what
 problem it solves, *what* you'll build first, *how* you'll measure it, and *what*
 it won't do.
 
+## Cleanup
+
+> Nothing to tear down ? this is a design/discovery lab that creates no cloud or
+> cluster resources. Keep your completed deliverable; it's a portfolio artifact.
+
 ## Reflection
 
 - Did writing the **anti-goals** change your capability list? (It usually should.)

@@ -62,6 +62,11 @@ A one-page charter (use [the template](./platform-team-charter-template.md)) a n
 team member or a stream-team lead could read in two minutes and understand the
 platform team's purpose, scope, promises, and how success is judged.
 
+## Cleanup
+
+> Nothing to tear down ? this is a design/discovery lab that creates no cloud or
+> cluster resources. Keep your completed deliverable; it's a portfolio artifact.
+
 ## Reflection
 
 - Is every success metric a **stream-team outcome** rather than a measure of your own

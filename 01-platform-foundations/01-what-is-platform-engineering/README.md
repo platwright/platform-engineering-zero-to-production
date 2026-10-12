@@ -327,4 +327,5 @@ Most platform failures are variations on a few themes:
 - [ ] Assessment completed
 - [ ] Production considerations documented
 
-_Next:_ [Module 01.2 — Platform as a Product →](../02-platform-as-a-product/)
+_Previous:_ [01 · Platform Foundations](../README.md)
+· _Next:_ [Module 01.2 — Platform as a Product →](../02-platform-as-a-product/)

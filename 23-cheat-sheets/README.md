@@ -1,31 +1,37 @@
-# 23 · Cheat Sheets
+# Cheat Sheets
 
-> 🚧 **Status: planned.** This section is scaffolded — the full content is on the
-> way. Track progress in the [ROADMAP](../ROADMAP.md) and [CHANGELOG](../CHANGELOG.md).
+> Dense, copy-pasteable quick-reference pages that condense the course for recall.
+> Each sheet links back to the full module(s) that teach the topic in depth.
 
-**Reference**
+These are for **recall, not learning**. If a command, policy, or query here needs
+context, follow the "See also" links to the full modules.
 
-Concise, printable quick-reference pages you can keep open while you work.
+## Index
 
-## Planned contents
+| Cheat sheet | What's inside |
+|-------------|---------------|
+| [Platform Engineering Overview](./platform-engineering-overview.md) | PE vs DevOps vs SRE, the five IDP planes, TVP, golden paths vs guardrails, Team Topologies |
+| [Platform Maturity & Operations](./platform-maturity-model.md) | Maturity Levels 1-5, production readiness, multi-cluster patterns, chaos template, CI/CD pipeline |
+| [Kubernetes](./kubernetes-cheat-sheet.md) | Architecture, resource model, workloads, resource management, RBAC, pod debugging |
+| [kubectl](./kubectl-cheat-sheet.md) | Task-grouped commands: get/describe/logs/exec/apply/debug/port-forward/auth |
+| [Helm & Kustomize](./helm-cheat-sheet.md) | Helm repo/install/upgrade/rollback/OCI and Kustomize bases/overlays/patches |
+| [Terraform](./terraform-cheat-sheet.md) | init/plan/apply, state, variables, modules, backends, workspaces, testing |
+| [GitOps](./gitops-cheat-sheet.md) | The four principles, push vs pull, repo strategy, drift/self-heal, secrets |
+| [Argo CD](./argocd-cheat-sheet.md) | Application/ApplicationSet, sync & health, sync waves, app-of-apps, CLI |
+| [Observability](./observability-cheat-sheet.md) | Three pillars, RED/USE/golden signals, PromQL, LogQL, SLO/burn-rate, OTel |
+| [Security & Policy](./security-cheat-sheet.md) | Kyverno patterns, secret-management options, SLSA levels, hardening checklist |
+| [Networking](./networking-cheat-sheet.md) | Flat pod network, Services/DNS, NetworkPolicy, Cilium/eBPF/Hubble, Gateway API |
+| [Internal Developer Platform](./idp-cheat-sheet.md) | The five planes, Backstage entities, golden path checklist |
+| [FinOps & Cost](./finops-cheat-sheet.md) | Inform/Optimize/Operate, the attribution gap, cost-per-workload, optimization checklist |
 
-- Platform engineering overview
-- Kubernetes and kubectl
-- Helm and Kustomize
-- Terraform
-- GitOps and ArgoCD
-- Observability (PromQL / LogQL)
-- Security (Kyverno, SLSA)
-- Networking (Cilium, Gateway API)
-- IDP and Backstage
-- FinOps optimization
-- Platform maturity model
+## How to use these
 
-## Prerequisites
+- **Scan** for the section you need; the headings and tables are the index.
+- **Copy** commands and snippets directly - they are real, not pseudo-code.
+- **Verify** against your own versions; flags and APIs evolve over time.
+- **Go deeper** via each sheet's "See also" and the [ROADMAP](../ROADMAP.md).
 
-Work through [00 · Orientation](../00-orientation/) and [01 · Platform Foundations](../01-platform-foundations/) first.
+## See also
 
-## Want to help build this section?
-
-Contributions are welcome. Start from the [module template](../shared/templates/module-template.md)
-and read [CONTRIBUTING.md](../CONTRIBUTING.md).
+- [Course glossary](../00-orientation/glossary.md) - terms used across the course.
+- [ROADMAP](../ROADMAP.md) - the full curriculum and module map.

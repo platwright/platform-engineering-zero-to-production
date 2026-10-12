@@ -11,10 +11,10 @@ is developed in the open, so each module is marked with its current status.
 | 🚧 | In progress / scaffolded — outline exists, content being written |
 | 🗓️ | Planned — not yet started |
 
-> **Current state:** Modules **00–21 are complete** — the entire core curriculum
-> (Orientation through Advanced Platform Topics), all four platform projects, and the
-> four capstone briefs. The remaining work is the reference material: interview
-> preparation (`22`) and cheat sheets (`23`). Want to help? See
+> **Current state:** 🎉 **The course is complete.** Every module is done — the full
+> curriculum (`00`–`20`), all four platform projects, the four capstone briefs (`21`),
+> and the reference material: interview preparation (`22`) and cheat sheets (`23`).
+> Ongoing work is maintenance and community contributions. Want to help? See
 > [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
@@ -228,8 +228,13 @@ is developed in the open, so each module is marked with its current status.
 
 ## Reference material
 
-- 🚧 **[22 · Interview Preparation](./22-interview-preparation/)** — question banks per domain
-- 🚧 **[23 · Cheat Sheets](./23-cheat-sheets/)** — concise quick-reference pages
+- ✅ **[22 · Interview Preparation](./22-interview-preparation/)** — 11 per-domain
+  question banks with model answers (fundamentals, containers & Kubernetes, IaC,
+  GitOps, observability, security, networking, developer experience, platform SRE,
+  FinOps, and system design).
+- ✅ **[23 · Cheat Sheets](./23-cheat-sheets/)** — 13 concise quick-reference pages
+  (platform overview, Kubernetes, kubectl, Helm/Kustomize, Terraform, GitOps, ArgoCD,
+  observability, security, networking, IDP, FinOps, and the maturity model).
 
 ---
 

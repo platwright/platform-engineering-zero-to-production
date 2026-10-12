@@ -58,6 +58,11 @@ A completed [`findings-template.md`](./findings-template.md) containing:
 You're done when someone who wasn't in the interviews could read your findings and
 understand what hurts most and why.
 
+## Cleanup
+
+> Nothing to tear down ? this is a design/discovery lab that creates no cloud or
+> cluster resources. Keep your completed deliverable; it's a portfolio artifact.
+
 ## Reflection
 
 - How many of the pains were about **tools**, and how many about **missing
