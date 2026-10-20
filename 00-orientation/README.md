@@ -18,7 +18,7 @@
 The rest of this module's files go deeper:
 
 | File | Read it to… |
-|------|-------------|
+| ------ | ------------- |
 | [`learning-path.md`](./learning-path.md) | Pick a track (Platform Engineer / DX Engineer / Architect) and a pace. |
 | [`prerequisites.md`](./prerequisites.md) | Check you're ready, and fill any gaps. |
 | [`environment-setup.md`](./environment-setup.md) | Install Docker, kubectl, kind, Terraform, Go, and friends. |
@@ -57,7 +57,7 @@ Three kinds of top-level folder:
 Supporting directories you'll use along the way:
 
 | Directory | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | [`shared/`](../shared/) | Reusable Terraform modules, Helm charts, GitHub Actions, and authoring templates. |
 | [`scripts/`](../scripts/) | Helper scripts — including the prerequisite checker. |
 | [`diagrams/`](../diagrams/) | Architecture, network, and platform diagrams. |
@@ -129,7 +129,7 @@ looks like.
 Labs come in a few flavors:
 
 | Type | You… | Example |
-|------|------|---------|
+| ------ | ------ | --------- |
 | **Discovery** | investigate and document | Interview engineers about deployment pain (Module 01.1). |
 | **Design** | produce an artifact | Write a one-page Platform Product Brief (Module 01.2). |
 | **Build** | provision/deploy something that works | Stand up a GKE foundation (Project 1). |
@@ -155,7 +155,7 @@ Treat these as rough guides for a motivated engineer. Go slower if a topic is ne
 faster if you've seen it before. Depth beats speed.
 
 | Phase | Modules | Rough effort |
-|-------|---------|--------------|
+| ------- | --------- | -------------- |
 | 00 · Orientation | — | 1–2 hrs (plus setup) |
 | 01 · Platform Foundations | 5 | 6–9 hrs |
 | 02 · Containerization | 7 | 10–14 hrs |
