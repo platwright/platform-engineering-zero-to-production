@@ -25,6 +25,8 @@ By the end of this module you will be able to:
 
 ## 1. Concept
 
+For the datapath flow, see [Cilium eBPF path](../../diagrams/network/cilium-ebpf-path.png).
+
 ### eBPF in one paragraph
 
 **eBPF** (extended Berkeley Packet Filter) lets you run small, sandboxed programs

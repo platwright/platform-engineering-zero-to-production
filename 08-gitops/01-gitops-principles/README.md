@@ -26,6 +26,8 @@ By the end of this module you will be able to:
 
 ## 1. Concept
 
+The deployment model is captured in the [GitOps model diagram](../../diagrams/architecture/gitops-model.png) and the [ArgoCD promotion flow](../../diagrams/architecture/argocd-promotion-flow.png).
+
 ### What GitOps actually is
 
 GitOps is an operating model with one core move: **describe the entire desired

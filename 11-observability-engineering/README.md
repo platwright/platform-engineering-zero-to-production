@@ -42,6 +42,11 @@ Everything here feeds directly into **Project 3 · Observability Platform** (the
 phase), where you will assemble these components into a single self-service product
 that every team consumes.
 
+## Visual references
+
+- [Observability data flow](../diagrams/architecture/observability-data-flow.png)
+- [SLO burn rate](../diagrams/platform/slo-burn-rate.png)
+
 ## Modules
 
 | # | Module | You'll learn | Lab deliverable |

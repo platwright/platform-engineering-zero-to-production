@@ -1,9 +1,17 @@
 # Architecture diagrams
 
-Platform and system architecture diagrams (IDP planes, GitOps flow, control/data
-plane, reference architectures).
+Reusable architecture views used throughout the course.
 
-Add diagram-as-code sources here alongside any exported images. See the
-[diagrams README](../README.md) for conventions.
+- [Platform overview](./platform-overview.png)
+- [IDP five planes](./idp-five-planes.png)
+- [Kubernetes architecture](./kubernetes-architecture.png)
+- [Kubernetes security layers](./kubernetes-Security-Layers.png)
+- [Terraform lifecycle](./terraform-lifecycle.png)
+- [GitOps model](./gitops-model.png)
+- [ArgoCD promotion flow](./argocd-promotion-flow.png)
+- [Multi-cluster hub-and-spoke](./multi-cluster-hub-and-spoke.png)
+- [Observability data flow](./observability-data-flow.png)
+- [Supply-chain pipeline](./supply-chain-pipeline.png)
+- [Secret management flow](./secret-management-flow.png)
 
-> 🚧 Populated as the relevant modules land.
+For the full repo-level map, see [diagrams/README.md](../README.md).

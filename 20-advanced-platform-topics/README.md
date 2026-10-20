@@ -66,6 +66,11 @@ it.** Those are the capabilities that separate a senior platform engineer from a
 principal one, and they are exactly what the [capstone projects](../21-capstone-projects/)
 ask you to demonstrate.
 
+## Visual references
+
+- [Platform maturity model](../diagrams/platform/platform-maturity-model.png)
+- [SLO burn rate](../diagrams/platform/slo-burn-rate.png)
+
 ## Modules
 
 | # | Module | You'll learn | Lab deliverable |

@@ -26,6 +26,8 @@ By the end of this module you will be able to:
 
 ## 1. Concept
 
+The role split in the Gateway API is shown in [Gateway API roles](../../diagrams/network/gateway-api-roles.png).
+
 ### Why Ingress wasn't enough
 
 The original **Ingress** API was a single resource that tried to be everything: it

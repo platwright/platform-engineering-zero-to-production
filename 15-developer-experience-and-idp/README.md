@@ -40,6 +40,11 @@ portal is not the platform**, and **the platform API is the product**. Backstage
 *one* client of a platform you already mostly built — this phase wires it up and adds
 the interface.
 
+## Visual references
+
+- [IDP five planes](../diagrams/architecture/idp-five-planes.png)
+- [IDP developer journey](../diagrams/platform/idp-developer-journey.png)
+
 ## Modules
 
 | # | Module | You'll learn | Lab deliverable |

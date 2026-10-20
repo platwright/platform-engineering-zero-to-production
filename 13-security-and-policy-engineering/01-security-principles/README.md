@@ -52,6 +52,8 @@ compliant workloads (Module 13.3), and hands out short-lived credentials (Module
 
 ### Defence in depth: seven layers
 
+The layered model is shown in [Kubernetes security layers](../../diagrams/architecture/kubernetes-Security-Layers.png).
+
 No single control is sufficient, because every control can fail. Defence in depth
 stacks **independent** layers so that an attacker must defeat each one, and so that a
 breach of any layer is *contained* by the next (the layers are drawn top-down in the

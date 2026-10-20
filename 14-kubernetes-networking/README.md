@@ -30,6 +30,12 @@ platform's **security** and **traffic** guarantees are enforced here:
 The throughline: **understand the model first, build the smallest demonstration
 yourself, then reach for the production tool (Cilium, Gateway API) — and know why.**
 
+## Visual references
+
+- [Kubernetes networking](../diagrams/network/kubernetes-networking.png)
+- [Cilium eBPF path](../diagrams/network/cilium-ebpf-path.png)
+- [Gateway API roles](../diagrams/network/gateway-api-roles.png)
+
 ## Modules
 
 | # | Module | You'll learn | Lab deliverable |

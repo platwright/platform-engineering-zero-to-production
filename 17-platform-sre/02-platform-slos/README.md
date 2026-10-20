@@ -40,6 +40,8 @@ what do you do when the budget runs out?**
 
 ### What is a platform SLI? The user is a team
 
+The SLO burn-rate framing is illustrated in [SLO burn rate](../../diagrams/platform/slo-burn-rate.png).
+
 For an app, "good" means a user got a fast, correct response. For a platform service,
 the "user" is a **stream-aligned team** (or its automation), so "good" means *the
 capability the team depends on worked*:

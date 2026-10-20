@@ -70,6 +70,10 @@ because something "watched for deletes," but because a controller noticed actual
 Kubernetes is **self-healing** and why it is **declarative**: you manage the desired
 state, the system manages the convergence.
 
+### Visual model: Kubernetes architecture
+
+For the reusable cluster view, see the [Kubernetes architecture diagram](../../diagrams/architecture/kubernetes-architecture.png).
+
 ### The control plane: the brain
 
 The **control plane** makes global decisions about the cluster. It has four core

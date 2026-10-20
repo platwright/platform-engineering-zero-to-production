@@ -87,6 +87,8 @@ is an implementation detail you choose later (and can change).
 
 ### Developer journey mapping
 
+Use the [IDP developer journey diagram](../../diagrams/platform/idp-developer-journey.png) to anchor the journey from idea to production.
+
 A **developer journey map** lays out every step a developer takes to go from idea
 to running-in-production, annotating each step with time, effort, emotion, and
 hand-offs. It makes friction visible.

@@ -34,6 +34,10 @@ You review the plan; `apply` enacts it. It is the control loop from Module 05.1,
 industrial. **OpenTofu** is a drop-in open-source fork; nearly everything here
 applies identically — swap `terraform` for `tofu`.
 
+### Visual model: Terraform lifecycle
+
+See the [Terraform lifecycle diagram](../../diagrams/architecture/terraform-lifecycle.png) for the full loop from plan through apply and state.
+
 ### Providers: the plugins that talk to APIs
 
 A **provider** is a plugin that knows how to manage a particular API — Google Cloud,

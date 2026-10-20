@@ -48,6 +48,13 @@ shipped Pod Security Admission and a hardened golden path; Project 2 added a
 signed-image Kyverno policy and the External Secrets Operator. This phase deepens all
 of them into a coherent, enforced whole.
 
+## Visual references
+
+- [Kubernetes security layers](../diagrams/architecture/kubernetes-Security-Layers.png)
+- [RBAC model](../diagrams/platform/rbac-model.png)
+- [Supply-chain pipeline](../diagrams/architecture/supply-chain-pipeline.png)
+- [Secret management flow](../diagrams/architecture/secret-management-flow.png)
+
 ## The seven layers of defence in depth
 
 No single control is sufficient. Real Kubernetes security is a stack of independent

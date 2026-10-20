@@ -43,6 +43,8 @@ infrastructure.
 
 ### The five planes of an IDP
 
+The canonical diagram for this model is the [IDP five planes diagram](../../diagrams/architecture/idp-five-planes.png).
+
 A durable mental model (from the platform engineering community and Humanitec's
 reference architecture) splits an IDP into **five functional planes**. Planes, not
 layers — each is a *concern*, and a given tool may touch several.

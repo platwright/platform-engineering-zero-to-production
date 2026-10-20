@@ -29,3 +29,12 @@ GitOps model · ArgoCD promotion flow · Multi-cluster hub-and-spoke · Observab
 data flow · SLO burn rate · Kubernetes security layers · Supply-chain pipeline ·
 Secret management flow · Cilium eBPF path · Gateway API roles · IDP developer
 journey · Platform maturity model. See the [ROADMAP](../ROADMAP.md).
+
+Use the links below when a lesson needs the reusable architectural picture behind
+its prose:
+
+- [Architecture diagrams](./architecture/)
+- [Network diagrams](./network/)
+- [Platform diagrams](./platform/)
+
+The repo-wide references are also maintained in the parent [README.md](../README.md).

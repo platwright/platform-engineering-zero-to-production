@@ -1,9 +1,12 @@
 # Platform diagrams
 
-Platform-concept diagrams: maturity model, the developer journey, team
-topologies, and other conceptual models.
+Reusable platform concept diagrams used throughout the course.
 
-Add diagram-as-code sources here alongside any exported images. See the
-[diagrams README](../README.md) for conventions.
+- [Container vs VM](./container-vs-vm.png)
+- [OCI image structure](./oci-image-structure.png)
+- [RBAC model](./rbac-model.png)
+- [Platform maturity model](./platform-maturity-model.png)
+- [SLO burn rate](./slo-burn-rate.png)
+- [IDP developer journey](./idp-developer-journey.png)
 
-> 🚧 Populated as the relevant modules land.
+For the full repo-level map, see [diagrams/README.md](../README.md).

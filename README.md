@@ -20,6 +20,30 @@ A free, self-paced, open-source course. No paywalls, no cohort fees, no gatekeep
 Work through it at your own pace, in the open, and build a portfolio of real
 platform systems while you learn.
 
+## Visual reference library
+
+Use these diagrams as you move through the course. They are the reusable system
+views behind the written material:
+
+- [Platform overview](./diagrams/architecture/platform-overview.png)
+- [IDP five planes](./diagrams/architecture/idp-five-planes.png)
+- [Kubernetes architecture](./diagrams/architecture/kubernetes-architecture.png)
+- [GitOps model](./diagrams/architecture/gitops-model.png)
+- [Terraform lifecycle](./diagrams/architecture/terraform-lifecycle.png)
+- [Observability data flow](./diagrams/architecture/observability-data-flow.png)
+- [Kubernetes security layers](./diagrams/architecture/kubernetes-Security-Layers.png)
+- [Kubernetes networking](./diagrams/network/kubernetes-networking.png)
+- [Cilium eBPF path](./diagrams/network/cilium-ebpf-path.png)
+- [Gateway API roles](./diagrams/network/gateway-api-roles.png)
+- [RBAC model](./diagrams/platform/rbac-model.png)
+- [OCI image structure](./diagrams/platform/oci-image-structure.png)
+- [Container vs VM](./diagrams/platform/container-vs-vm.png)
+- [SLO burn rate](./diagrams/platform/slo-burn-rate.png)
+- [Platform maturity model](./diagrams/platform/platform-maturity-model.png)
+- [IDP developer journey](./diagrams/platform/idp-developer-journey.png)
+
+See the full set in [diagrams/README.md](./diagrams/README.md).
+
 ---
 
 ## Why this course exists

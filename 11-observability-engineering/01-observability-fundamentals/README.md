@@ -27,6 +27,8 @@ By the end of this module you will be able to:
 
 ## 1. Concept
 
+See the end-to-end telemetry model in [Observability data flow](../../diagrams/architecture/observability-data-flow.png).
+
 ### Observability borrowed from control theory
 
 The word comes from control theory: a system is **observable** if you can infer its

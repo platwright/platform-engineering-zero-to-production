@@ -35,6 +35,12 @@ build a full multi-environment, multi-team GitOps platform. Everything here —
 principles, Argo CD, ApplicationSets, promotion, secrets — is a component you will
 assemble there. Learn it well; you are about to use all of it.
 
+## Visual references
+
+- [GitOps model](../diagrams/architecture/gitops-model.png)
+- [ArgoCD promotion flow](../diagrams/architecture/argocd-promotion-flow.png)
+- [Secret management flow](../diagrams/architecture/secret-management-flow.png)
+
 ## Modules
 
 | # | Module | You'll learn | Lab deliverable |

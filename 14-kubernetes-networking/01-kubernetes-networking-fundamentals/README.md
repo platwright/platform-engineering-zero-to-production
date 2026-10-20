@@ -24,6 +24,8 @@ By the end of this module you will be able to:
 
 ## 1. Concept
 
+The network model is visualized in [Kubernetes networking](../../diagrams/network/kubernetes-networking.png).
+
 ### The one rule: a flat network, no NAT
 
 Kubernetes imposes a deliberately simple networking model. Every implementation (every
