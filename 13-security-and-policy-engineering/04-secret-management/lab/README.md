@@ -27,7 +27,7 @@ plus a demonstrated rotation where a new Vault value propagates automatically.
   Windows use WSL or Git Bash).
 - Starter files in this folder: [`vault-setup.sh`](./vault-setup.sh),
   [`secret-store.yaml`](./secret-store.yaml),
-  [`external-secret.yaml`](./external-secret.yaml),
+  [`external-secret.yaml`](https://github.com/platwright/platform-engineering-zero-to-production/blob/main/13-security-and-policy-engineering/04-secret-management/lab/external-secret.yaml),
   [`encryption-config.yaml`](./encryption-config.yaml).
 
 > **Scope.** This lab uses Vault **dev mode** — in-memory, auto-unsealed, guarded by a

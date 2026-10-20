@@ -10,7 +10,7 @@ sizes are welcome — from fixing a typo to authoring an entire module.
 - **Improve labs** — better instructions, additional edge cases, solution notes.
 - **Add diagrams** that explain something hard to express in prose.
 - **Write new modules** from the [ROADMAP](./ROADMAP.md), following the content model.
-- **Report problems** via [issues](../../issues) — content errors, unclear
+- **Report problems** via [issues](https://github.com/platwright/platform-engineering-zero-to-production/issues) — content errors, unclear
   explanations, or things that didn't work.
 - **Share feedback** on what helped you learn and what didn't.
 
@@ -117,5 +117,5 @@ external sources, cite them in "Further reading" rather than copying them.
 
 ## Questions
 
-Open a [discussion](../../discussions) or an issue. Please also read our
+Open a [discussion](https://github.com/platwright/platform-engineering-zero-to-production/discussions) or an issue. Please also read our
 [Code of Conduct](./CODE_OF_CONDUCT.md) — it applies to all project spaces.
