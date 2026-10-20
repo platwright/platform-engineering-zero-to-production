@@ -256,12 +256,12 @@ The foundation release: repository scaffolding plus the first two modules.
   - `05` Platform Team Topology
   - Each with a full lesson and a hands-on lab.
 
-[Unreleased]: ../../compare/v1.0.0...HEAD
-[1.0.0]: ../../releases/tag/v1.0.0
-[0.7.0]: ../../releases/tag/v0.7.0
-[0.6.0]: ../../releases/tag/v0.6.0
-[0.5.0]: ../../releases/tag/v0.5.0
-[0.4.0]: ../../releases/tag/v0.4.0
-[0.3.0]: ../../releases/tag/v0.3.0
-[0.2.0]: ../../releases/tag/v0.2.0
-[0.1.0]: ../../releases/tag/v0.1.0
+[Unreleased]: https://github.com/platwright/platform-engineering-zero-to-production/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/platwright/platform-engineering-zero-to-production/releases/tag/v1.0.0
+[0.7.0]: https://github.com/platwright/platform-engineering-zero-to-production/releases/tag/v0.7.0
+[0.6.0]: https://github.com/platwright/platform-engineering-zero-to-production/releases/tag/v0.6.0
+[0.5.0]: https://github.com/platwright/platform-engineering-zero-to-production/releases/tag/v0.5.0
+[0.4.0]: https://github.com/platwright/platform-engineering-zero-to-production/releases/tag/v0.4.0
+[0.3.0]: https://github.com/platwright/platform-engineering-zero-to-production/releases/tag/v0.3.0
+[0.2.0]: https://github.com/platwright/platform-engineering-zero-to-production/releases/tag/v0.2.0
+[0.1.0]: https://github.com/platwright/platform-engineering-zero-to-production/releases/tag/v0.1.0

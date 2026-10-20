@@ -2,7 +2,7 @@
 
 A quick reference for the terms used throughout this course. Definitions are
 intentionally short and practical; the relevant module goes deeper. If a term you
-need is missing, please [open an issue](../../issues) or a pull request.
+need is missing, please [open an issue](https://github.com/platwright/platform-engineering-zero-to-production/issues) or a pull request.
 
 > Tip: use your browser's find (<kbd>Ctrl/Cmd</kbd>+<kbd>F</kbd>) to jump to a term.
 

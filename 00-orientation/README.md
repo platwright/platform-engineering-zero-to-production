@@ -228,10 +228,10 @@ Each module is "done" when you can tick:
 
 ## Getting help
 
-- **Something wrong or unclear?** Open an [issue](../../issues) using the content
+- **Something wrong or unclear?** Open an [issue](https://github.com/platwright/platform-engineering-zero-to-production/issues) using the content
   or lab template.
 - **Want to discuss or ask a question?** Use
-  [Discussions](../../discussions).
+  [Discussions](https://github.com/platwright/platform-engineering-zero-to-production/discussions).
 - **Want to improve the course?** See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ---

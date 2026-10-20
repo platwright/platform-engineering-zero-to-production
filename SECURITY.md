@@ -12,7 +12,7 @@ anything sensitive.
 
 Preferred channel:
 
-- Use GitHub's **[Report a vulnerability](../../security/advisories/new)**
+- Use GitHub's **[Report a vulnerability](https://github.com/platwright/platform-engineering-zero-to-production/security/advisories/new)**
   (Security Advisories) to open a private report.
 
 Alternatively, email `security@example.com` *(replace with a monitored
